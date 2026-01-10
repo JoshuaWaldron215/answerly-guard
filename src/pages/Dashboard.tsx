@@ -12,11 +12,14 @@ import {
   AlertTriangle,
   Activity,
   Zap,
-  ArrowRight
+  ArrowRight,
+  Lock
 } from "lucide-react";
 import { useState } from "react";
 import StatCard from "@/components/dashboard/StatCard";
 import ActivityItem from "@/components/dashboard/ActivityItem";
+import AiAssistant from "@/components/dashboard/AiAssistant";
+import PlanToggle from "@/components/dashboard/PlanToggle";
 
 const stats = [
   { 
@@ -106,6 +109,7 @@ const filterOptions = ["Today", "This Week", "High Intent"];
 
 export default function Dashboard() {
   const [activeFilter, setActiveFilter] = useState("Today");
+  const [plan, setPlan] = useState<"starter" | "pro">("pro");
 
   return (
     <AppLayout>
@@ -116,24 +120,29 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="relative">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/50 flex items-center justify-center">
-                <Activity className="w-5 h-5 text-primary-foreground" />
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/50 flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-primary-foreground" />
+                </div>
+                <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-success"></span>
+                </span>
               </div>
-              <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-success"></span>
-              </span>
+              <div>
+                <h1 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
+                  Command Center
+                </h1>
+                <p className="text-sm text-muted-foreground font-mono">
+                  <span className="text-success">●</span> System active • Last sync 2s ago
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
-                Command Center
-              </h1>
-              <p className="text-sm text-muted-foreground font-mono">
-                <span className="text-success">●</span> System active • Last sync 2s ago
-              </p>
-            </div>
+            
+            {/* Plan Toggle */}
+            <PlanToggle plan={plan} onPlanChange={setPlan} />
           </div>
         </motion.div>
 
@@ -144,36 +153,67 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* AI Insight Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-          className="mb-8"
-        >
-          <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/10 via-card to-card p-5">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,hsl(var(--primary)/0.15),transparent_70%)]" />
-            <div className="relative flex items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-primary/20 text-primary ring-1 ring-primary/30">
-                  <Zap className="w-5 h-5" />
+        {/* AI Insight Banner - Pro Only */}
+        {plan === "pro" ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35 }}
+            className="mb-8"
+          >
+            <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/10 via-card to-card p-5">
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,hsl(var(--primary)/0.15),transparent_70%)]" />
+              <div className="relative flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-primary/20 text-primary ring-1 ring-primary/30">
+                    <Zap className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground mb-0.5">
+                      AI Insight
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      2 high-intent leads waiting — respond within 10 min to boost conversion by 3x
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground mb-0.5">
-                    AI Insight
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    2 high-intent leads waiting — respond within 10 min to boost conversion by 3x
-                  </p>
-                </div>
+                <Button variant="ghost" size="sm" className="shrink-0 gap-2 text-primary hover:text-primary hover:bg-primary/10">
+                  View leads
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
               </div>
-              <Button variant="ghost" size="sm" className="shrink-0 gap-2 text-primary hover:text-primary hover:bg-primary/10">
-                View leads
-                <ArrowRight className="w-4 h-4" />
-              </Button>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35 }}
+            className="mb-8"
+          >
+            <div className="relative overflow-hidden rounded-2xl border border-border bg-card/50 p-5">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-secondary text-muted-foreground">
+                    <Lock className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground mb-0.5">
+                      Upgrade to Pro
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Unlock AI insights, smart recommendations, and the AI assistant
+                    </p>
+                  </div>
+                </div>
+                <Button size="sm" className="shrink-0 gap-2">
+                  Upgrade
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Activity Feed */}
         <motion.div
@@ -226,6 +266,9 @@ export default function Dashboard() {
             </div>
           </div>
         </motion.div>
+
+        {/* AI Assistant - Pro Only */}
+        {plan === "pro" && <AiAssistant />}
       </div>
     </AppLayout>
   );
