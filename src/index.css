@@ -6,6 +6,66 @@
 
 @layer base {
   :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 4%;
+
+    --card: 0 0% 99%;
+    --card-foreground: 240 10% 4%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 4%;
+
+    --primary: 217 91% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 25%;
+
+    --muted: 240 5% 94%;
+    --muted-foreground: 240 4% 46%;
+
+    --accent: 38 92% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --success: 142 71% 40%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 217 91% 50%;
+
+    --radius: 0.75rem;
+
+    /* Custom gradients - Light mode */
+    --gradient-primary: linear-gradient(135deg, hsl(217, 91%, 50%) 0%, hsl(240, 80%, 55%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(38, 92%, 50%) 0%, hsl(25, 95%, 53%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0, 0%, 100%) 0%, hsl(240, 5%, 98%) 100%);
+    --gradient-glow: radial-gradient(ellipse at center, hsl(217, 91%, 50%, 0.1) 0%, transparent 70%);
+
+    /* Shadows - Light mode */
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -2px hsl(0 0% 0% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -4px hsl(0 0% 0% / 0.1);
+    --shadow-glow: 0 0 40px -10px hsl(217, 91%, 50%, 0.2);
+    --shadow-accent-glow: 0 0 30px -5px hsl(38, 92%, 50%, 0.3);
+
+    --sidebar-background: 0 0% 99%;
+    --sidebar-foreground: 240 6% 25%;
+    --sidebar-primary: 217 91% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 5% 96%;
+    --sidebar-accent-foreground: 240 10% 4%;
+    --sidebar-border: 240 6% 90%;
+    --sidebar-ring: 217 91% 50%;
+  }
+
+  .dark {
     --background: 240 10% 4%;
     --foreground: 0 0% 98%;
 
@@ -40,15 +100,13 @@
     --input: 240 6% 18%;
     --ring: 217 91% 60%;
 
-    --radius: 0.75rem;
-
-    /* Custom gradients */
+    /* Custom gradients - Dark mode */
     --gradient-primary: linear-gradient(135deg, hsl(217, 91%, 60%) 0%, hsl(240, 80%, 65%) 100%);
     --gradient-accent: linear-gradient(135deg, hsl(38, 92%, 50%) 0%, hsl(25, 95%, 53%) 100%);
     --gradient-card: linear-gradient(180deg, hsl(240, 10%, 8%) 0%, hsl(240, 10%, 5%) 100%);
     --gradient-glow: radial-gradient(ellipse at center, hsl(217, 91%, 60%, 0.15) 0%, transparent 70%);
 
-    /* Shadows */
+    /* Shadows - Dark mode */
     --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.3);
     --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.4), 0 2px 4px -2px hsl(0 0% 0% / 0.3);
     --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.5), 0 4px 6px -4px hsl(0 0% 0% / 0.4);
@@ -96,10 +154,18 @@
   /* Glass effect */
   .glass {
     @apply backdrop-blur-xl;
+    background: hsl(0 0% 100% / 0.8);
+  }
+
+  .dark .glass {
     background: hsl(240 10% 6% / 0.8);
   }
 
   .glass-border {
+    @apply border border-black/5;
+  }
+
+  .dark .glass-border {
     @apply border border-white/5;
   }
 
