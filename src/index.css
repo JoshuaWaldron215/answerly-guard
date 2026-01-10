@@ -289,3 +289,8 @@
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
+
+@keyframes scan {
+  0% { background-position: 0 -100%; }
+  100% { background-position: 0 100%; }
+}
