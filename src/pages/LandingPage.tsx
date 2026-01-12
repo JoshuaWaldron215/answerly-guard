@@ -1,5 +1,5 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -17,24 +17,43 @@ import {
   Star,
   Play,
   Bot,
-  Bell
+  Bell,
+  TrendingUp,
+  Users,
+  DollarSign,
+  X,
+  Check,
+  Sparkles,
+  PhoneOff,
+  PhoneIncoming,
+  Timer,
+  Target,
+  Award,
+  ChevronDown
 } from "lucide-react";
+// Dashboard preview - will use placeholder until image is added
+const dashboardPreview = "/placeholder.svg";
 
 const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
+  initial: { opacity: 0, y: 30 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5 }
+  transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
 };
 
 const staggerContainer = {
   animate: {
     transition: {
-      staggerChildren: 0.1
+      staggerChildren: 0.1,
+      delayChildren: 0.1
     }
   }
 };
 
 export default function LandingPage() {
+  const { scrollYProgress } = useScroll();
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.95]);
+
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Navigation */}
@@ -42,20 +61,24 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-orange-500 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-orange-500 flex items-center justify-center shadow-lg">
                 <Phone className="w-4 h-4 text-white" />
               </div>
               <span className="text-xl font-bold text-foreground">Answerly</span>
             </div>
             <div className="hidden md:flex items-center gap-8">
-              <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Features</a>
-              <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
-              <a href="#faq" className="text-muted-foreground hover:text-foreground transition-colors">FAQ</a>
+              <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How It Works</a>
+              <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
+              <a href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
+              <a href="#faq" className="text-sm text-muted-foreground hover:text-foreground transition-colors">FAQ</a>
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm">Log In</Button>
+              <Button variant="ghost" size="sm" className="hidden sm:flex">Log In</Button>
               <Link to="/onboarding">
-                <Button variant="accent" size="sm">Start Free Trial</Button>
+                <Button variant="accent" size="sm">
+                  Start Free
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </Button>
               </Link>
             </div>
           </div>
@@ -63,144 +86,336 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Background glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-to-b from-primary/20 via-primary/5 to-transparent rounded-full blur-3xl" />
+      <section className="relative pt-28 pb-8 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        {/* Animated background gradients */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-1/4 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
+          <div className="absolute top-40 right-1/4 w-[400px] h-[400px] bg-accent/15 rounded-full blur-[100px] animate-pulse animation-delay-500" />
+        </div>
         
-        <div className="max-w-7xl mx-auto relative">
+        <motion.div 
+          className="max-w-7xl mx-auto relative"
+          style={{ opacity: heroOpacity, scale: heroScale }}
+        >
           <motion.div 
             className="text-center max-w-4xl mx-auto"
             initial="initial"
             animate="animate"
             variants={staggerContainer}
           >
-            <motion.div variants={fadeInUp}>
-              <Badge variant="default" className="mb-6 px-4 py-1.5">
-                <Zap className="w-3 h-3 mr-1" />
-                AI-Powered Virtual Receptionist
-              </Badge>
+            {/* Social proof badge */}
+            <motion.div variants={fadeInUp} className="flex justify-center mb-6">
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-card border border-border">
+                <div className="flex -space-x-2">
+                  {[1,2,3,4].map((i) => (
+                    <div key={i} className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-background flex items-center justify-center">
+                      <span className="text-[10px] font-medium text-foreground">{['MJ', 'DR', 'SK', 'TC'][i-1]}</span>
+                    </div>
+                  ))}
+                </div>
+                <span className="text-sm text-muted-foreground">
+                  <span className="text-foreground font-semibold">500+</span> detailers recovering missed calls
+                </span>
+              </div>
             </motion.div>
             
             <motion.h1 
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6"
+              className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-foreground leading-[1.1] mb-6 tracking-tight"
               variants={fadeInUp}
             >
-              Never Miss a Job Because{" "}
-              <span className="text-gradient-primary">You Missed a Call</span>
+              Stop Losing{" "}
+              <span className="relative inline-block">
+                <span className="text-gradient-primary">$2,400/month</span>
+                <motion.div 
+                  className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-primary to-accent rounded-full"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ delay: 0.8, duration: 0.6 }}
+                />
+              </span>
+              <br />
+              <span className="text-muted-foreground font-medium text-3xl sm:text-4xl lg:text-5xl">to Missed Calls</span>
             </motion.h1>
             
             <motion.p 
-              className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10"
+              className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-8"
               variants={fadeInUp}
             >
-              Answerly texts missed callers instantly, answers quick questions, 
-              and sends a booking link — automatically.
+              Every missed call costs you <span className="text-foreground font-medium">$150-300</span>. 
+              Answerly texts back instantly, answers questions with AI, and books the job — 
+              <span className="text-foreground font-medium"> while you're under the hood</span>.
             </motion.p>
             
             <motion.div 
-              className="flex flex-col sm:flex-row items-center justify-center gap-4"
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8"
               variants={fadeInUp}
             >
               <Link to="/onboarding">
-                <Button variant="hero" size="xl" className="w-full sm:w-auto">
-                  Start Free Trial
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                <Button variant="hero" size="xl" className="w-full sm:w-auto text-base group">
+                  Start 14-Day Free Trial
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Button variant="outline" size="xl" className="w-full sm:w-auto">
+              <Button variant="outline" size="xl" className="w-full sm:w-auto text-base">
                 <Play className="w-4 h-4 mr-2" />
-                See How It Works
+                Watch 2-min Demo
               </Button>
             </motion.div>
-          </motion.div>
 
-          {/* Animated Flow Visual */}
-          <motion.div 
-            className="mt-20 relative"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-          >
-            <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
-              <FlowStep 
-                icon={<Phone className="w-6 h-6" />}
-                title="Missed Call"
-                subtitle="You're busy working"
-                delay={0}
-              />
-              <FlowArrow />
-              <FlowStep 
-                icon={<MessageSquare className="w-6 h-6" />}
-                title="Instant SMS"
-                subtitle="Automatic response"
-                delay={0.1}
-                highlighted
-              />
-              <FlowArrow />
-              <FlowStep 
-                icon={<Calendar className="w-6 h-6" />}
-                title="Booking Link"
-                subtitle="Or AI answers FAQs"
-                delay={0.2}
-              />
-              <FlowArrow />
-              <FlowStep 
-                icon={<BarChart3 className="w-6 h-6" />}
-                title="Dashboard Log"
-                subtitle="Track every lead"
-                delay={0.3}
-              />
-            </div>
+            {/* Trust badges */}
+            <motion.div 
+              className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground"
+              variants={fadeInUp}
+            >
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-success" />
+                No credit card required
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-success" />
+                Setup in 2 minutes
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-success" />
+                Cancel anytime
+              </div>
+            </motion.div>
           </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Dashboard Preview - Full Width Showcase */}
+      <section className="relative px-4 sm:px-6 lg:px-8 pb-20">
+        <motion.div 
+          className="max-w-6xl mx-auto"
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="relative">
+            {/* Glow behind dashboard */}
+            <div className="absolute -inset-4 bg-gradient-to-b from-primary/20 via-accent/10 to-transparent rounded-3xl blur-2xl" />
+            
+            {/* Browser chrome */}
+            <div className="relative bg-card border border-border rounded-2xl overflow-hidden shadow-2xl">
+              {/* Browser header */}
+              <div className="flex items-center gap-2 px-4 py-3 bg-secondary/50 border-b border-border">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-destructive/50" />
+                  <div className="w-3 h-3 rounded-full bg-warning/50" />
+                  <div className="w-3 h-3 rounded-full bg-success/50" />
+                </div>
+                <div className="flex-1 flex justify-center">
+                  <div className="px-4 py-1 rounded-lg bg-background/80 text-xs text-muted-foreground">
+                    app.answerly.io/dashboard
+                  </div>
+                </div>
+              </div>
+              
+              {/* Dashboard screenshot */}
+              <img 
+                src={dashboardPreview} 
+                alt="Answerly Command Center Dashboard" 
+                className="w-full"
+              />
+              
+              {/* Video placeholder overlay - for future video */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer bg-background/50 backdrop-blur-sm">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="w-20 h-20 rounded-full bg-accent flex items-center justify-center shadow-lg shadow-accent/30">
+                    <Play className="w-8 h-8 text-white ml-1" />
+                  </div>
+                  <span className="text-foreground font-medium">Watch Demo Video</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Stats Bar */}
+      <section className="py-12 px-4 sm:px-6 lg:px-8 border-y border-border bg-card/50">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <StatItem value="71%" label="Average recovery rate" icon={<TrendingUp className="w-5 h-5" />} />
+            <StatItem value="< 5s" label="Response time" icon={<Timer className="w-5 h-5" />} />
+            <StatItem value="$540" label="Avg revenue recovered/week" icon={<DollarSign className="w-5 h-5" />} />
+            <StatItem value="24/7" label="Always-on coverage" icon={<Clock className="w-5 h-5" />} />
+          </div>
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section id="features" className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      {/* Problem Section */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
           <motion.div 
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Built for Busy Business Owners
+            <Badge variant="outline" className="mb-4 px-4 py-1.5">
+              <PhoneOff className="w-3 h-3 mr-1.5" />
+              The Problem
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+              Right Now, You're Losing Jobs
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Stop losing jobs to missed calls. Answerly works 24/7 so you can focus on the work.
+              Every time your phone rings while you're detailing, you face an impossible choice.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <BenefitCard
-              icon={<Zap className="w-8 h-8" />}
-              title="Recover Lost Jobs"
-              description="Instant missed-call follow-up texts ensure no lead slips through. Send your booking link automatically."
-              features={["Auto-text within seconds", "Custom booking link", "Lead capture"]}
+          <div className="grid md:grid-cols-3 gap-6">
+            <ProblemCard
+              icon={<PhoneOff className="w-6 h-6" />}
+              stat="5-8"
+              label="Missed calls per week"
+              description="You can't answer while you're waxing a hood or cleaning an interior."
               delay={0}
             />
-            <BenefitCard
-              icon={<Clock className="w-8 h-8" />}
-              title="Save Time"
-              description="AI handles common questions about your services, pricing ranges, and service area — so you don't have to."
-              features={["AI-powered FAQs", "After-hours coverage", "Smart escalation"]}
+            <ProblemCard
+              icon={<DollarSign className="w-6 h-6" />}
+              stat="$150-300"
+              label="Lost per missed call"
+              description="That's a detail job walking to your competitor down the street."
               delay={0.1}
-              badge="Pro"
             />
-            <BenefitCard
-              icon={<Shield className="w-8 h-8" />}
-              title="Stay Organized"
-              description="Every interaction logged and summarized. Know what happened and what to do next at a glance."
-              features={["Conversation history", "AI summaries", "Follow-up reminders"]}
+            <ProblemCard
+              icon={<Users className="w-6 h-6" />}
+              stat="80%"
+              label="Won't leave a voicemail"
+              description="They'll just call the next detailer on Google instead."
               delay={0.2}
             />
           </div>
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-card/50 to-transparent">
+      {/* How It Works */}
+      <section id="how-it-works" className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-card/50 to-transparent">
+        <div className="max-w-6xl mx-auto">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <Badge variant="outline" className="mb-4 px-4 py-1.5">
+              <Sparkles className="w-3 h-3 mr-1.5" />
+              How It Works
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+              Never Miss Another Job
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Answerly works in the background while you focus on what you do best.
+            </p>
+          </motion.div>
+
+          <div className="relative">
+            {/* Connection line */}
+            <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-border to-transparent -translate-y-1/2" />
+            
+            <div className="grid md:grid-cols-4 gap-8">
+              <StepCard
+                number="1"
+                icon={<PhoneIncoming className="w-6 h-6" />}
+                title="Call Comes In"
+                description="You're busy detailing. The call goes to voicemail."
+                delay={0}
+              />
+              <StepCard
+                number="2"
+                icon={<MessageSquare className="w-6 h-6" />}
+                title="Instant Text"
+                description="Within 5 seconds, they get your custom message."
+                delay={0.1}
+                highlighted
+              />
+              <StepCard
+                number="3"
+                icon={<Bot className="w-6 h-6" />}
+                title="AI Answers"
+                description="Questions about pricing? Hours? AI handles it."
+                delay={0.2}
+                badge="Pro"
+              />
+              <StepCard
+                number="4"
+                icon={<Calendar className="w-6 h-6" />}
+                title="Job Booked"
+                description="They book directly. You see it in your dashboard."
+                delay={0.3}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <Badge variant="outline" className="mb-4 px-4 py-1.5">
+              <Target className="w-3 h-3 mr-1.5" />
+              Features
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+              Everything You Need to Capture Every Lead
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <FeatureCard
+              icon={<Zap className="w-6 h-6" />}
+              title="Instant SMS Follow-up"
+              description="Custom text message sent within seconds of a missed call."
+              delay={0}
+            />
+            <FeatureCard
+              icon={<Calendar className="w-6 h-6" />}
+              title="Booking Link Included"
+              description="Your calendar link goes with every message. Easy self-booking."
+              delay={0.1}
+            />
+            <FeatureCard
+              icon={<Bot className="w-6 h-6" />}
+              title="AI FAQ Answering"
+              description="Handle pricing questions, hours, and service area automatically."
+              badge="Pro"
+              delay={0.2}
+            />
+            <FeatureCard
+              icon={<BarChart3 className="w-6 h-6" />}
+              title="Command Center"
+              description="See every lead, every conversation, every booking in one place."
+              delay={0.3}
+            />
+            <FeatureCard
+              icon={<Bell className="w-6 h-6" />}
+              title="Smart Notifications"
+              description="Know when high-intent leads need your attention."
+              delay={0.4}
+            />
+            <FeatureCard
+              icon={<Shield className="w-6 h-6" />}
+              title="Known Caller Filter"
+              description="Family and vendors? Never auto-texted. You're in control."
+              delay={0.5}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Comparison Section */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-card/50 to-transparent">
         <div className="max-w-5xl mx-auto">
           <motion.div 
             className="text-center mb-16"
@@ -209,10 +424,54 @@ export default function LandingPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Simple, Transparent Pricing
+              Without Answerly vs. With Answerly
             </h2>
-            <p className="text-lg text-muted-foreground">
-              No hidden fees. Cancel anytime.
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <ComparisonCard
+              title="Without Answerly"
+              isNegative
+              items={[
+                "Missed calls go to voicemail (80% don't leave one)",
+                "Leads call your competitors instead",
+                "You stress about missing calls while working",
+                "No idea how many jobs you're losing",
+                "Manually texting back hours later"
+              ]}
+            />
+            <ComparisonCard
+              title="With Answerly"
+              items={[
+                "Every missed call gets an instant text back",
+                "Leads book directly from your message",
+                "Work stress-free knowing leads are handled",
+                "Dashboard shows exactly what's happening",
+                "AI handles common questions for you"
+              ]}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <Badge variant="outline" className="mb-4 px-4 py-1.5">
+              <Award className="w-3 h-3 mr-1.5" />
+              Simple Pricing
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+              Pay Less Than One Lost Job
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Answerly pays for itself after recovering just one job per month.
             </p>
           </motion.div>
 
@@ -222,11 +481,12 @@ export default function LandingPage() {
               price="99"
               description="Essential missed-call recovery"
               features={[
-                "Missed-call SMS follow-up",
-                "Booking link sent automatically",
+                "Instant missed-call SMS",
+                "Booking link in every text",
                 "Lead capture + conversation log",
                 "Voicemail transcription + AI summary",
-                "Simple recovered leads dashboard"
+                "Recovered leads dashboard",
+                "Known caller filter"
               ]}
               delay={0}
             />
@@ -236,49 +496,66 @@ export default function LandingPage() {
               description="Full AI receptionist power"
               features={[
                 "Everything in Starter",
+                "AI answers common questions",
                 "Controlled AI call answering",
-                "AI answers common FAQs",
                 "Auto confirmations + reminders",
-                "\"What should I do next?\" assistant"
+                "Priority support",
+                "\"What should I do next?\" AI assistant"
               ]}
               popular
               delay={0.1}
             />
           </div>
+
+          <motion.p 
+            className="text-center text-sm text-muted-foreground mt-8"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+          >
+            All plans include 14-day free trial • No credit card required • Cancel anytime
+          </motion.p>
         </div>
       </section>
 
       {/* Testimonials */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-card/50 to-transparent">
+        <div className="max-w-6xl mx-auto">
           <motion.div 
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
+            <Badge variant="outline" className="mb-4 px-4 py-1.5">
+              <Star className="w-3 h-3 mr-1.5 fill-current" />
+              Testimonials
+            </Badge>
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Loved by Mobile Detailers
+              Detailers Love Answerly
             </h2>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6">
             <TestimonialCard
-              quote="I was losing 5-6 jobs a week from missed calls. Now I catch almost all of them. Paid for itself in the first week."
+              quote="Recovered 3 jobs in my first week. That's over $400 that would've walked. The ROI is insane."
               author="Marcus J."
-              role="Pristine Auto Detailing"
+              business="Pristine Auto Detailing"
+              stat="3 jobs recovered"
               delay={0}
             />
             <TestimonialCard
-              quote="The AI answering is incredible. It handles all those 'how much for an SUV?' questions while I'm under the hood."
+              quote="The AI answering is a game-changer. It handles all those 'how much for an SUV?' texts while I work."
               author="David R."
-              role="Shine Mobile Detail"
+              business="Shine Mobile Detail"
+              stat="71% recovery rate"
               delay={0.1}
             />
             <TestimonialCard
-              quote="Finally, a tool that just works. Setup took 5 minutes and I haven't touched it since. Love the dashboard."
+              quote="Setup took literally 5 minutes. Now I don't stress about my phone while detailing. Life-changing."
               author="Sarah K."
-              role="Fresh Start Detailing"
+              business="Fresh Start Detailing"
+              stat="$540/week recovered"
               delay={0.2}
             />
           </div>
@@ -286,7 +563,7 @@ export default function LandingPage() {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-card/30 to-transparent">
+      <section id="faq" className="py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <motion.div 
             className="text-center mb-16"
@@ -314,50 +591,46 @@ export default function LandingPage() {
             />
             <FAQItem 
               question="How fast does it respond?"
-              answer="Within seconds. The moment a call goes to voicemail, Answerly sends your custom message."
+              answer="Within 5 seconds. The moment a call goes to voicemail, Answerly sends your custom message."
             />
             <FAQItem 
-              question="Is pricing transparent?"
-              answer="Yes. What you see is what you pay. No per-text fees, no surprise charges. Just a simple monthly subscription."
+              question="What if I want to cancel?"
+              answer="Cancel anytime with one click. No contracts, no hidden fees, no hassle. Your data is yours."
             />
           </div>
         </div>
       </section>
 
-      {/* Contact / CTA Section */}
+      {/* Final CTA Section */}
       <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-4xl mx-auto">
           <motion.div
+            className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/10 via-card to-accent/10 border border-border p-12 text-center"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Ready to Stop Missing Jobs?
-            </h2>
-            <p className="text-lg text-muted-foreground mb-8">
-              Set up in 2 minutes. Start catching missed calls today.
-            </p>
-            <Link to="/onboarding">
-              <Button variant="hero" size="xl">
-                Start Free Trial
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </Link>
-
-            <div className="mt-16 p-8 rounded-2xl border border-border bg-card/50">
-              <h3 className="text-xl font-semibold text-foreground mb-4">Have Questions?</h3>
-              <p className="text-muted-foreground mb-6">
-                We'd love to hear from you. Drop us a line.
+            {/* Decorative elements */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
+            
+            <div className="relative">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+                Stop Losing Jobs Today
+              </h2>
+              <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
+                Every day without Answerly is another 5-8 potential jobs walking to your competition. 
+                Start your free trial now.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                <input 
-                  type="email" 
-                  placeholder="your@email.com"
-                  className="flex-1 px-4 py-3 rounded-xl bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-                <Button variant="secondary">Send Message</Button>
-              </div>
+              <Link to="/onboarding">
+                <Button variant="hero" size="xl" className="text-base group">
+                  Start 14-Day Free Trial
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              <p className="text-sm text-muted-foreground mt-4">
+                No credit card required • Setup in 2 minutes
+              </p>
             </div>
           </motion.div>
         </div>
@@ -372,6 +645,11 @@ export default function LandingPage() {
             </div>
             <span className="text-lg font-bold text-foreground">Answerly</span>
           </div>
+          <div className="flex items-center gap-6 text-sm text-muted-foreground">
+            <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
+            <a href="#" className="hover:text-foreground transition-colors">Terms</a>
+            <a href="#" className="hover:text-foreground transition-colors">Contact</a>
+          </div>
           <p className="text-sm text-muted-foreground">
             © 2025 Answerly.io. All rights reserved.
           </p>
@@ -382,48 +660,27 @@ export default function LandingPage() {
 }
 
 // Component helpers
-function FlowStep({ icon, title, subtitle, delay, highlighted }: {
-  icon: React.ReactNode;
-  title: string;
-  subtitle: string;
-  delay: number;
-  highlighted?: boolean;
-}) {
+function StatItem({ value, label, icon }: { value: string; label: string; icon: React.ReactNode }) {
   return (
-    <motion.div
-      className={`flex flex-col items-center p-6 rounded-2xl ${
-        highlighted 
-          ? 'bg-gradient-to-b from-primary/20 to-primary/5 border border-primary/30' 
-          : 'bg-card border border-border'
-      }`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.5 + delay, duration: 0.4 }}
+    <motion.div 
+      className="text-center"
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
     >
-      <div className={`p-3 rounded-xl mb-3 ${highlighted ? 'bg-primary/20 text-primary' : 'bg-secondary text-muted-foreground'}`}>
-        {icon}
-      </div>
-      <h3 className="font-semibold text-foreground">{title}</h3>
-      <p className="text-sm text-muted-foreground">{subtitle}</p>
+      <div className="flex justify-center mb-2 text-primary">{icon}</div>
+      <div className="text-2xl sm:text-3xl font-bold text-foreground mb-1">{value}</div>
+      <div className="text-sm text-muted-foreground">{label}</div>
     </motion.div>
   );
 }
 
-function FlowArrow() {
-  return (
-    <div className="hidden md:block text-muted-foreground">
-      <ArrowRight className="w-6 h-6" />
-    </div>
-  );
-}
-
-function BenefitCard({ icon, title, description, features, delay, badge }: {
+function ProblemCard({ icon, stat, label, description, delay }: {
   icon: React.ReactNode;
-  title: string;
+  stat: string;
+  label: string;
   description: string;
-  features: string[];
   delay: number;
-  badge?: string;
 }) {
   return (
     <motion.div
@@ -432,20 +689,106 @@ function BenefitCard({ icon, title, description, features, delay, badge }: {
       viewport={{ once: true }}
       transition={{ delay }}
     >
-      <Card variant="premium" className="p-8 h-full card-hover">
+      <Card className="p-6 bg-destructive/5 border-destructive/20 h-full">
+        <div className="p-2 rounded-lg bg-destructive/10 text-destructive w-fit mb-4">
+          {icon}
+        </div>
+        <div className="text-3xl font-bold text-foreground mb-1">{stat}</div>
+        <div className="text-sm text-muted-foreground mb-3">{label}</div>
+        <p className="text-foreground">{description}</p>
+      </Card>
+    </motion.div>
+  );
+}
+
+function StepCard({ number, icon, title, description, delay, highlighted, badge }: {
+  number: string;
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  delay: number;
+  highlighted?: boolean;
+  badge?: string;
+}) {
+  return (
+    <motion.div
+      className="relative"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay }}
+    >
+      <Card className={`p-6 h-full text-center relative ${highlighted ? 'border-primary/50 bg-primary/5' : ''}`}>
+        {badge && (
+          <Badge variant="warning" className="absolute -top-2 -right-2 text-xs">
+            {badge}
+          </Badge>
+        )}
+        <div className="w-8 h-8 rounded-full bg-secondary text-foreground text-sm font-bold flex items-center justify-center mx-auto mb-4">
+          {number}
+        </div>
+        <div className={`p-3 rounded-xl mx-auto w-fit mb-4 ${highlighted ? 'bg-primary/20 text-primary' : 'bg-secondary text-muted-foreground'}`}>
+          {icon}
+        </div>
+        <h3 className="font-semibold text-foreground mb-2">{title}</h3>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </Card>
+    </motion.div>
+  );
+}
+
+function FeatureCard({ icon, title, description, badge, delay }: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  badge?: string;
+  delay: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay }}
+    >
+      <Card className="p-6 h-full card-hover group">
         <div className="flex items-start justify-between mb-4">
-          <div className="p-3 rounded-xl bg-primary/10 text-primary">
+          <div className="p-2.5 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
             {icon}
           </div>
-          {badge && <Badge variant="warning">{badge}</Badge>}
+          {badge && <Badge variant="warning" className="text-xs">{badge}</Badge>}
         </div>
-        <h3 className="text-xl font-semibold text-foreground mb-2">{title}</h3>
-        <p className="text-muted-foreground mb-6">{description}</p>
-        <ul className="space-y-2">
-          {features.map((feature, i) => (
-            <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-              <CheckCircle2 className="w-4 h-4 text-success" />
-              {feature}
+        <h3 className="font-semibold text-foreground mb-2">{title}</h3>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </Card>
+    </motion.div>
+  );
+}
+
+function ComparisonCard({ title, items, isNegative }: {
+  title: string;
+  items: string[];
+  isNegative?: boolean;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+    >
+      <Card className={`p-8 h-full ${isNegative ? 'bg-destructive/5 border-destructive/20' : 'bg-success/5 border-success/20'}`}>
+        <h3 className={`text-xl font-semibold mb-6 ${isNegative ? 'text-destructive' : 'text-success'}`}>
+          {title}
+        </h3>
+        <ul className="space-y-4">
+          {items.map((item, i) => (
+            <li key={i} className="flex items-start gap-3">
+              {isNegative ? (
+                <X className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+              ) : (
+                <Check className="w-5 h-5 text-success shrink-0 mt-0.5" />
+              )}
+              <span className="text-foreground">{item}</span>
             </li>
           ))}
         </ul>
@@ -470,8 +813,7 @@ function PricingCard({ name, price, description, features, popular, delay }: {
       transition={{ delay }}
     >
       <Card 
-        variant="premium" 
-        className={`p-8 relative ${popular ? 'border-primary/50 shadow-glow' : ''}`}
+        className={`p-8 relative h-full ${popular ? 'border-primary/50 shadow-lg shadow-primary/10' : ''}`}
       >
         {popular && (
           <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-accent to-orange-500 text-white border-0">
@@ -483,14 +825,14 @@ function PricingCard({ name, price, description, features, popular, delay }: {
           <p className="text-muted-foreground">{description}</p>
         </div>
         <div className="mb-6">
-          <span className="text-4xl font-bold text-foreground">${price}</span>
+          <span className="text-5xl font-bold text-foreground">${price}</span>
           <span className="text-muted-foreground">/mo</span>
         </div>
         <ul className="space-y-3 mb-8">
           {features.map((feature, i) => (
-            <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
+            <li key={i} className="flex items-start gap-3 text-sm">
               <CheckCircle2 className="w-4 h-4 text-success mt-0.5 shrink-0" />
-              {feature}
+              <span className="text-foreground">{feature}</span>
             </li>
           ))}
         </ul>
@@ -500,7 +842,7 @@ function PricingCard({ name, price, description, features, popular, delay }: {
             className="w-full"
             size="lg"
           >
-            Get Started
+            Start Free Trial
           </Button>
         </Link>
       </Card>
@@ -508,10 +850,11 @@ function PricingCard({ name, price, description, features, popular, delay }: {
   );
 }
 
-function TestimonialCard({ quote, author, role, delay }: {
+function TestimonialCard({ quote, author, business, stat, delay }: {
   quote: string;
   author: string;
-  role: string;
+  business: string;
+  stat: string;
   delay: number;
 }) {
   return (
@@ -521,16 +864,19 @@ function TestimonialCard({ quote, author, role, delay }: {
       viewport={{ once: true }}
       transition={{ delay }}
     >
-      <Card variant="premium" className="p-6 h-full">
+      <Card className="p-6 h-full flex flex-col">
         <div className="flex gap-1 mb-4">
           {[...Array(5)].map((_, i) => (
             <Star key={i} className="w-4 h-4 fill-accent text-accent" />
           ))}
         </div>
-        <p className="text-foreground mb-6">"{quote}"</p>
-        <div>
-          <p className="font-semibold text-foreground">{author}</p>
-          <p className="text-sm text-muted-foreground">{role}</p>
+        <p className="text-foreground mb-6 flex-1">"{quote}"</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="font-semibold text-foreground">{author}</p>
+            <p className="text-sm text-muted-foreground">{business}</p>
+          </div>
+          <Badge variant="success" className="text-xs">{stat}</Badge>
         </div>
       </Card>
     </motion.div>
@@ -538,7 +884,7 @@ function TestimonialCard({ quote, author, role, delay }: {
 }
 
 function FAQItem({ question, answer }: { question: string; answer: string }) {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   
   return (
     <motion.div
@@ -546,18 +892,18 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
     >
-      <Card variant="premium" className="overflow-hidden">
+      <Card className="overflow-hidden">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full p-6 text-left flex items-center justify-between"
+          className="w-full p-6 text-left flex items-center justify-between hover:bg-secondary/50 transition-colors"
         >
-          <span className="font-semibold text-foreground">{question}</span>
+          <span className="font-semibold text-foreground pr-4">{question}</span>
           <motion.span
             animate={{ rotate: isOpen ? 180 : 0 }}
             transition={{ duration: 0.2 }}
-            className="text-muted-foreground"
+            className="text-muted-foreground shrink-0"
           >
-            <ArrowRight className="w-4 h-4 rotate-90" />
+            <ChevronDown className="w-5 h-5" />
           </motion.span>
         </button>
         <motion.div
