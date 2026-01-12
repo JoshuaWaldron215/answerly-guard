@@ -152,7 +152,7 @@ export default function LandingPage() {
             >
               <Link to="/onboarding">
                 <Button variant="hero" size="xl" className="w-full sm:w-auto text-base group">
-                  Start 14-Day Free Trial
+                  Start 7-Day Free Trial
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
@@ -456,7 +456,7 @@ export default function LandingPage() {
 
       {/* Pricing Section */}
       <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <motion.div 
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
@@ -475,46 +475,140 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <PricingCard
-              name="Starter"
-              price="99"
-              description="Essential missed-call recovery"
-              features={[
-                "Instant missed-call SMS",
-                "Booking link in every text",
-                "Lead capture + conversation log",
-                "Voicemail transcription + AI summary",
-                "Recovered leads dashboard",
-                "Known caller filter"
-              ]}
-              delay={0}
-            />
-            <PricingCard
-              name="Pro"
-              price="149"
-              description="Full AI receptionist power"
-              features={[
-                "Everything in Starter",
-                "AI answers common questions",
-                "Controlled AI call answering",
-                "Auto confirmations + reminders",
-                "Priority support",
-                "\"What should I do next?\" AI assistant"
-              ]}
-              popular
-              delay={0.1}
-            />
-          </div>
-
-          <motion.p 
-            className="text-center text-sm text-muted-foreground mt-8"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+          {/* Single Pro Plan */}
+          <motion.div
+            className="max-w-lg mx-auto mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            All plans include 14-day free trial • No credit card required • Cancel anytime
-          </motion.p>
+            <Card className="relative p-8 bg-card border-2 border-primary/50 overflow-hidden">
+              {/* Glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
+              
+              <div className="relative">
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold text-foreground mb-1">PRO</h3>
+                  <p className="text-muted-foreground">Everything Included</p>
+                </div>
+
+                <div className="text-center mb-8">
+                  <span className="text-5xl font-bold text-foreground">$149</span>
+                  <span className="text-muted-foreground">/mo</span>
+                </div>
+
+                <div className="space-y-4 mb-8">
+                  <PricingFeature 
+                    title="AI answers every call 24/7" 
+                    description="Sounds natural, picks up in 2 seconds" 
+                  />
+                  <PricingFeature 
+                    title="Collects booking information" 
+                    description="Name, phone, vehicle, service, preferred date" 
+                  />
+                  <PricingFeature 
+                    title="Instant lead notifications" 
+                    description="Text + email with details within seconds" 
+                  />
+                  <PricingFeature 
+                    title="Call recordings & transcripts" 
+                    description="Listen to every call, read transcripts" 
+                  />
+                  <PricingFeature 
+                    title="Lead dashboard" 
+                    description="Track leads, mark contacted/booked" 
+                  />
+                  <PricingFeature 
+                    title="Known caller filter" 
+                    description="Family/friends bypass AI (optional)" 
+                  />
+                  <PricingFeature 
+                    title="Unlimited calls" 
+                    description="No per-call fees, no hidden costs" 
+                  />
+                  <PricingFeature 
+                    title="Cancel anytime" 
+                    description="No contract, no commitments" 
+                  />
+                </div>
+
+                <Link to="/onboarding" className="block">
+                  <Button variant="hero" size="lg" className="w-full text-base group">
+                    Start 7-Day Free Trial
+                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+
+                <div className="flex flex-wrap items-center justify-center gap-4 mt-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1.5">
+                    <Check className="w-4 h-4 text-success" />
+                    No credit card required
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Check className="w-4 h-4 text-success" />
+                    Setup in 2 minutes
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Check className="w-4 h-4 text-success" />
+                    Cancel anytime
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+
+          {/* Founding Member Offer */}
+          <motion.div
+            className="max-w-lg mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
+            <Card className="relative p-8 bg-gradient-to-br from-accent/10 via-card to-orange-500/10 border-2 border-accent/50 overflow-hidden">
+              {/* Fire decorations */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 text-4xl">🔥</div>
+              
+              <div className="relative text-center">
+                <div className="inline-flex items-center gap-2 mb-2">
+                  <span className="text-xl">🔥</span>
+                  <span className="text-lg font-bold text-foreground">Founding Member Offer</span>
+                  <span className="text-xl">🔥</span>
+                </div>
+                <p className="text-sm text-muted-foreground mb-6">Limited Time</p>
+
+                <p className="text-foreground mb-4">
+                  First 20 customers get lifetime founding member pricing
+                </p>
+
+                <div className="mb-4">
+                  <span className="text-4xl font-bold text-accent">$99</span>
+                  <span className="text-foreground font-semibold">/month forever</span>
+                </div>
+
+                <p className="text-success font-medium mb-2">(Save $50 every month)</p>
+                <p className="text-sm text-muted-foreground mb-6">
+                  Regular price: <span className="line-through">$149/month</span>
+                </p>
+
+                <div className="bg-background/50 rounded-lg p-3 mb-6">
+                  <p className="text-foreground font-semibold">Spots remaining: <span className="text-accent">15/20</span></p>
+                </div>
+
+                <Link to="/onboarding" className="block">
+                  <Button variant="accent" size="lg" className="w-full text-base group">
+                    Lock In $99/mo Rate
+                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+
+                <p className="text-sm text-muted-foreground mt-4 flex items-center justify-center gap-1">
+                  <Clock className="w-4 h-4" />
+                  Offer expires when all 20 spots are filled
+                </p>
+              </div>
+            </Card>
+          </motion.div>
         </div>
       </section>
 
@@ -624,7 +718,7 @@ export default function LandingPage() {
               </p>
               <Link to="/onboarding">
                 <Button variant="hero" size="xl" className="text-base group">
-                  Start 14-Day Free Trial
+                  Start 7-Day Free Trial
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
@@ -794,6 +888,18 @@ function ComparisonCard({ title, items, isNegative }: {
         </ul>
       </Card>
     </motion.div>
+  );
+}
+
+function PricingFeature({ title, description }: { title: string; description: string }) {
+  return (
+    <div className="flex items-start gap-3">
+      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+      <div>
+        <p className="text-foreground font-medium">{title}</p>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
+    </div>
   );
 }
 
