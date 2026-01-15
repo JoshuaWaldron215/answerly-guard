@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 import AppLayout from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
-import { 
-  Phone, 
+import {
+  Phone,
   TrendingUp,
-  Calendar, 
+  Calendar,
   AlertCircle,
   Bot,
   X,
@@ -13,103 +13,140 @@ import {
   Activity,
   Zap,
   ArrowRight,
-  Lock
+  Lock,
+  Loader2
 } from "lucide-react";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/contexts/AuthContext";
+import { db } from "@/lib/supabase";
 import StatCard from "@/components/dashboard/StatCard";
 import ActivityItem from "@/components/dashboard/ActivityItem";
 import AiAssistant from "@/components/dashboard/AiAssistant";
 import PlanToggle from "@/components/dashboard/PlanToggle";
-
-const stats = [
-  { 
-    label: "Missed Calls", 
-    value: "7", 
-    change: "+3 vs yesterday",
-    icon: Phone,
-    color: "text-muted-foreground"
-  },
-  { 
-    label: "Recovered", 
-    value: "5", 
-    change: "71% recovery rate",
-    icon: TrendingUp,
-    color: "text-success"
-  },
-  { 
-    label: "Booked", 
-    value: "3", 
-    change: "$540 revenue",
-    icon: Calendar,
-    color: "text-primary"
-  },
-  { 
-    label: "Follow-Up", 
-    value: "2", 
-    change: "Action needed",
-    icon: AlertCircle,
-    color: "text-warning"
-  },
-];
-
-const activityFeed = [
-  {
-    id: 1,
-    type: "booked",
-    icon: Flame,
-    time: "10:34",
-    caller: "(305) 555-0123",
-    status: "Missed call → booked",
-    summary: "Full detail for Tesla Model 3, Saturday 9am. Est. $180",
-    intent: "high"
-  },
-  {
-    id: 2,
-    type: "waiting",
-    icon: AlertTriangle,
-    time: "09:45",
-    caller: "(786) 555-0456",
-    status: "Missed call → replied",
-    summary: "Asked about price for SUV interior cleaning. Waiting for response.",
-    intent: "medium"
-  },
-  {
-    id: 3,
-    type: "ai",
-    icon: Bot,
-    time: "08:22",
-    caller: "(954) 555-0789",
-    status: "AI answered after-hours",
-    summary: "Answered hours question, sent booking link. Customer browsed 3 pages.",
-    intent: "high"
-  },
-  {
-    id: 4,
-    type: "booked",
-    icon: Flame,
-    time: "Yesterday",
-    caller: "(305) 555-0321",
-    status: "Missed call → booked",
-    summary: "Ceramic coating appointment, next Tuesday. Est. $450",
-    intent: "high"
-  },
-  {
-    id: 5,
-    type: "dropped",
-    icon: X,
-    time: "Yesterday",
-    caller: "(305) 555-0999",
-    status: "Missed call → no response",
-    summary: "SMS sent, no reply after 24h. May need follow-up call.",
-    intent: "low"
-  },
-];
 
 const filterOptions = ["Today", "This Week", "High Intent"];
 
 export default function Dashboard() {
   const [activeFilter, setActiveFilter] = useState("Today");
   const [plan, setPlan] = useState<"starter" | "pro">("pro");
+  const { user } = useAuth();
+
+  // Fetch dashboard stats
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    queryKey: ['dashboard-stats', user?.id],
+    queryFn: () => db.getDashboardStats(user!.id),
+    enabled: !!user,
+    refetchInterval: 30000, // Refresh every 30 seconds
+  });
+
+  // Fetch recent calls for activity feed
+  const { data: recentCalls, isLoading: callsLoading } = useQuery({
+    queryKey: ['recent-calls', user?.id],
+    queryFn: () => db.getCalls(user!.id, { limit: 10 }),
+    enabled: !!user,
+    refetchInterval: 30000,
+  });
+
+  // Transform stats data for StatCard component
+  const statCards = [
+    {
+      label: "Total Calls",
+      value: stats?.totalCalls?.toString() || "0",
+      change: "Today",
+      icon: Phone,
+      color: "text-muted-foreground"
+    },
+    {
+      label: "Hot Leads",
+      value: stats?.hotLeads?.toString() || "0",
+      change: "High intent",
+      icon: Flame,
+      color: "text-orange-500"
+    },
+    {
+      label: "Booked",
+      value: stats?.booked?.toString() || "0",
+      change: "Confirmed",
+      icon: Calendar,
+      color: "text-primary"
+    },
+    {
+      label: "Follow-Up",
+      value: stats?.needsFollowup?.toString() || "0",
+      change: "Waiting",
+      icon: AlertCircle,
+      color: "text-warning"
+    },
+  ];
+
+  // Transform calls to activity feed items
+  const activityFeed = recentCalls?.map((call) => {
+    const getIcon = () => {
+      if (call.outcome === 'booked') return Flame;
+      if (call.outcome === 'waiting') return AlertTriangle;
+      if (call.status === 'ai_answered') return Bot;
+      if (call.outcome === 'dropped') return X;
+      return Phone;
+    };
+
+    const getType = () => {
+      if (call.outcome === 'booked') return 'booked';
+      if (call.outcome === 'waiting') return 'waiting';
+      if (call.outcome === 'dropped') return 'dropped';
+      return 'ai';
+    };
+
+    const formatTime = (dateStr: string) => {
+      const date = new Date(dateStr);
+      const now = new Date();
+      const diffHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+
+      if (diffHours < 24) {
+        return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      } else if (diffHours < 48) {
+        return 'Yesterday';
+      } else {
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
+    };
+
+    const getStatus = () => {
+      if (call.outcome === 'booked') return 'Booked appointment';
+      if (call.status === 'ai_answered') return 'AI answered';
+      if (call.status === 'missed') return 'Missed call';
+      return 'Call received';
+    };
+
+    const getSummary = () => {
+      if (call.summary) return call.summary;
+      if (call.service_requested) {
+        return `Interested in ${call.service_requested}${call.vehicle_make ? ` for ${call.vehicle_year || ''} ${call.vehicle_make} ${call.vehicle_model || ''}` : ''}`;
+      }
+      return 'Call received, awaiting follow-up';
+    };
+
+    return {
+      id: call.id,
+      type: getType(),
+      icon: getIcon(),
+      time: formatTime(call.created_at),
+      caller: call.caller_name || call.phone_number,
+      status: getStatus(),
+      summary: getSummary(),
+      intent: call.intent
+    };
+  }) || [];
+
+  if (statsLoading || callsLoading) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
@@ -148,7 +185,7 @@ export default function Dashboard() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {stats.map((stat, index) => (
+          {statCards.map((stat, index) => (
             <StatCard key={stat.label} {...stat} index={index} />
           ))}
         </div>

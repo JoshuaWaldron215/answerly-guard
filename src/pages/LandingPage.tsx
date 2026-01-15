@@ -74,7 +74,7 @@ export default function LandingPage() {
             </div>
             <div className="flex items-center gap-3">
               <Button variant="ghost" size="sm" className="hidden sm:flex">Log In</Button>
-              <Link to="/onboarding">
+              <Link to="/signup">
                 <Button variant="accent" size="sm">
                   Start Free
                   <ArrowRight className="w-4 h-4 ml-1" />
@@ -150,7 +150,7 @@ export default function LandingPage() {
               className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8"
               variants={fadeInUp}
             >
-              <Link to="/onboarding">
+              <Link to="/signup">
                 <Button variant="hero" size="xl" className="w-full sm:w-auto text-base group">
                   Start 7-Day Free Trial
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -532,7 +532,7 @@ export default function LandingPage() {
                   />
                 </div>
 
-                <Link to="/onboarding" className="block">
+                <Link to="/signup" className="block">
                   <Button variant="hero" size="lg" className="w-full text-base group">
                     Start 7-Day Free Trial
                     <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -595,7 +595,7 @@ export default function LandingPage() {
                   <p className="text-foreground font-semibold">Spots remaining: <span className="text-accent">15/20</span></p>
                 </div>
 
-                <Link to="/onboarding" className="block">
+                <Link to="/signup" className="block">
                   <Button variant="accent" size="lg" className="w-full text-base group">
                     Lock In $99/mo Rate
                     <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -716,7 +716,7 @@ export default function LandingPage() {
                 Every day without Answerly is another 5-8 potential jobs walking to your competition. 
                 Start your free trial now.
               </p>
-              <Link to="/onboarding">
+              <Link to="/signup">
                 <Button variant="hero" size="xl" className="text-base group">
                   Start 7-Day Free Trial
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -942,7 +942,7 @@ function PricingCard({ name, price, description, features, popular, delay }: {
             </li>
           ))}
         </ul>
-        <Link to="/onboarding">
+        <Link to="/signup">
           <Button 
             variant={popular ? "accent" : "secondary"} 
             className="w-full"
