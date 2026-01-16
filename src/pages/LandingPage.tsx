@@ -1,18 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import VoiceDemo from "@/components/VoiceDemo";
-import { 
-  Phone, 
-  MessageSquare, 
-  Calendar, 
-  BarChart3, 
-  Clock, 
-  Shield, 
-  Zap, 
+import {
+  Phone,
+  MessageSquare,
+  Calendar,
+  BarChart3,
+  Clock,
+  Shield,
+  Zap,
   CheckCircle2,
   ArrowRight,
   Star,
@@ -55,6 +55,17 @@ export default function LandingPage() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.95]);
 
+  // Force light mode on landing page
+  useEffect(() => {
+    const html = document.documentElement;
+    const originalClass = html.className;
+    html.classList.remove('dark');
+
+    return () => {
+      html.className = originalClass;
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Navigation */}
@@ -62,10 +73,11 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-orange-500 flex items-center justify-center shadow-lg">
-                <Phone className="w-4 h-4 text-white" />
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-tr from-accent/20 to-transparent"></div>
+                <span className="text-xl relative z-10">🚗</span>
               </div>
-              <span className="text-xl font-bold text-foreground">DetailPilotAI</span>
+              <span className="text-xl font-bold text-foreground">DetailPilot<span className="text-primary">AI</span></span>
             </div>
             <div className="hidden md:flex items-center gap-8">
               <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How It Works</a>
@@ -777,10 +789,11 @@ export default function LandingPage() {
       <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-border">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-orange-500 flex items-center justify-center">
-              <Phone className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-tr from-accent/20 to-transparent"></div>
+              <span className="text-lg relative z-10">🚗</span>
             </div>
-            <span className="text-lg font-bold text-foreground">DetailPilotAI</span>
+            <span className="text-lg font-bold text-foreground">DetailPilot<span className="text-primary">AI</span></span>
           </div>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
