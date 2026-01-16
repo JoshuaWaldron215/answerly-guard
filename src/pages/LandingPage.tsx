@@ -73,7 +73,9 @@ export default function LandingPage() {
               <a href="#faq" className="text-sm text-muted-foreground hover:text-foreground transition-colors">FAQ</a>
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" className="hidden sm:flex">Log In</Button>
+              <Link to="/login">
+                <Button variant="ghost" size="sm" className="hidden sm:flex">Log In</Button>
+              </Link>
               <Link to="/signup">
                 <Button variant="accent" size="sm">
                   Start Free
