@@ -178,7 +178,7 @@ export default function VoiceDemo() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {[
                 'How much for a full detail?',
-                'What's your availability?',
+                'What is your availability?',
                 'Do you do ceramic coating?',
               ].map((question, idx) => (
                 <div
