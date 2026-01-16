@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import VoiceDemo from "@/components/VoiceDemo";
 import { 
   Phone, 
   MessageSquare, 
@@ -184,6 +185,38 @@ export default function LandingPage() {
             </motion.div>
           </motion.div>
         </motion.div>
+      </section>
+
+      {/* Interactive Voice Demo */}
+      <section className="relative px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            className="text-center mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <Badge variant="outline" className="mb-4 px-4 py-1.5">
+              <Sparkles className="w-3 h-3 mr-1.5" />
+              Try It Now
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+              Talk to Our AI Receptionist
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              See how DetailPilotAI handles calls. Click to start a real conversation with our AI.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            <VoiceDemo />
+          </motion.div>
+        </div>
       </section>
 
       {/* Dashboard Preview - Full Width Showcase */}
