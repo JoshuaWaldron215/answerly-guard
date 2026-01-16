@@ -89,134 +89,138 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-28 pb-8 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative pt-28 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         {/* Animated background gradients */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-1/4 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
           <div className="absolute top-40 right-1/4 w-[400px] h-[400px] bg-accent/15 rounded-full blur-[100px] animate-pulse animation-delay-500" />
         </div>
-        
-        <motion.div 
+
+        <motion.div
           className="max-w-7xl mx-auto relative"
           style={{ opacity: heroOpacity, scale: heroScale }}
         >
-          <motion.div 
-            className="text-center max-w-4xl mx-auto"
-            initial="initial"
-            animate="animate"
-            variants={staggerContainer}
-          >
-            {/* Social proof badge */}
-            <motion.div variants={fadeInUp} className="flex justify-center mb-6">
-              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-card border border-border">
-                <div className="flex -space-x-2">
-                  {[1,2,3,4].map((i) => (
-                    <div key={i} className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-background flex items-center justify-center">
-                      <span className="text-[10px] font-medium text-foreground">{['MJ', 'DR', 'SK', 'TC'][i-1]}</span>
-                    </div>
-                  ))}
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left: Hero Content */}
+            <motion.div
+              className="text-center lg:text-left"
+              initial="initial"
+              animate="animate"
+              variants={staggerContainer}
+            >
+              {/* Social proof badge */}
+              <motion.div variants={fadeInUp} className="flex justify-center lg:justify-start mb-6">
+                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-card border border-border">
+                  <div className="flex -space-x-2">
+                    {[1,2,3,4].map((i) => (
+                      <div key={i} className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-background flex items-center justify-center">
+                        <span className="text-[10px] font-medium text-foreground">{['MJ', 'DR', 'SK', 'TC'][i-1]}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    <span className="text-foreground font-semibold">500+</span> detailers recovering leads
+                  </span>
                 </div>
-                <span className="text-sm text-muted-foreground">
-                  <span className="text-foreground font-semibold">500+</span> detailers recovering missed calls
+              </motion.div>
+
+              <motion.h1
+                className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-foreground leading-[1.1] mb-6 tracking-tight"
+                variants={fadeInUp}
+              >
+                Never Miss a{" "}
+                <span className="relative inline-block">
+                  <span className="text-gradient-primary">$150+ Lead</span>
+                  <motion.div
+                    className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-primary to-accent rounded-full"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ delay: 0.8, duration: 0.6 }}
+                  />
                 </span>
-              </div>
-            </motion.div>
-            
-            <motion.h1 
-              className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-foreground leading-[1.1] mb-6 tracking-tight"
-              variants={fadeInUp}
-            >
-              Stop Losing{" "}
-              <span className="relative inline-block">
-                <span className="text-gradient-primary">$2,400/month</span>
-                <motion.div 
-                  className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-primary to-accent rounded-full"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ delay: 0.8, duration: 0.6 }}
-                />
-              </span>
-              <br />
-              <span className="text-muted-foreground font-medium text-3xl sm:text-4xl lg:text-5xl">to Missed Calls</span>
-            </motion.h1>
-            
-            <motion.p 
-              className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-8"
-              variants={fadeInUp}
-            >
-              Every missed call costs you <span className="text-foreground font-medium">$150-300</span>. 
-              DetailPilotAI texts back instantly, answers questions with AI, and books the job — 
-              <span className="text-foreground font-medium"> while you're under the hood</span>.
-            </motion.p>
-            
-            <motion.div 
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8"
-              variants={fadeInUp}
-            >
-              <Link to="/signup">
-                <Button variant="hero" size="xl" className="w-full sm:w-auto text-base group">
-                  Start 7-Day Free Trial
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-              <Button variant="outline" size="xl" className="w-full sm:w-auto text-base">
-                <Play className="w-4 h-4 mr-2" />
-                Watch 2-min Demo
-              </Button>
+                {" "}Again
+              </motion.h1>
+
+              <motion.p
+                className="text-lg sm:text-xl text-muted-foreground mb-8 leading-relaxed"
+                variants={fadeInUp}
+              >
+                DetailPilotAI <span className="text-foreground font-semibold">answers instantly, qualifies leads, and books jobs automatically</span> —
+                while you're under the hood.
+              </motion.p>
+
+              <motion.div
+                className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-8"
+                variants={fadeInUp}
+              >
+                <Link to="/signup">
+                  <Button variant="hero" size="xl" className="w-full sm:w-auto text-base group shadow-2xl shadow-accent/20">
+                    Start Free Trial
+                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <div className="flex -space-x-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-accent text-accent" />
+                    ))}
+                  </div>
+                  <span className="font-medium">4.9/5 from 200+ shops</span>
+                </div>
+              </motion.div>
+
+              {/* Trust badges */}
+              <motion.div
+                className="flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-muted-foreground"
+                variants={fadeInUp}
+              >
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-success" />
+                  No credit card required
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-success" />
+                  2-min setup
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-success" />
+                  Cancel anytime
+                </div>
+              </motion.div>
             </motion.div>
 
-            {/* Trust badges */}
-            <motion.div 
-              className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground"
-              variants={fadeInUp}
+            {/* Right: Compact Voice Demo */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="hidden lg:block"
             >
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-success" />
-                No credit card required
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-success" />
-                Setup in 2 minutes
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-success" />
-                Cancel anytime
+              <div className="relative">
+                {/* Decorative glow */}
+                <div className="absolute -inset-4 bg-gradient-to-tr from-primary/20 via-accent/20 to-transparent rounded-3xl blur-3xl" />
+
+                {/* Compact demo card */}
+                <Card className="relative border-2 border-primary/20 bg-card/95 backdrop-blur-xl p-6 shadow-2xl">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-xl bg-primary/10">
+                        <Phone className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-foreground">Try Our AI Now</h3>
+                        <p className="text-sm text-muted-foreground">Talk to the AI receptionist</p>
+                      </div>
+                    </div>
+
+                    {/* Mini voice demo */}
+                    <VoiceDemo compact />
+                  </div>
+                </Card>
               </div>
             </motion.div>
-          </motion.div>
+          </div>
         </motion.div>
-      </section>
-
-      {/* Interactive Voice Demo */}
-      <section className="relative px-4 sm:px-6 lg:px-8 py-12">
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            className="text-center mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <Badge variant="outline" className="mb-4 px-4 py-1.5">
-              <Sparkles className="w-3 h-3 mr-1.5" />
-              Try It Now
-            </Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Talk to Our AI Receptionist
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              See how DetailPilotAI handles calls. Click to start a real conversation with our AI.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-          >
-            <VoiceDemo />
-          </motion.div>
-        </div>
       </section>
 
       {/* Dashboard Preview - Full Width Showcase */}

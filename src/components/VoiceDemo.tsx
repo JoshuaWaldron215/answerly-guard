@@ -8,7 +8,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 const VAPI_PUBLIC_KEY = '602440a9-daf6-4dac-9501-f7e7311de665';
 const ASSISTANT_ID = '2c1ebf69-cd16-4719-a7e1-d2e52de66f9b';
 
-export default function VoiceDemo() {
+interface VoiceDemoProps {
+  compact?: boolean;
+}
+
+export default function VoiceDemo({ compact = false }: VoiceDemoProps) {
   const [vapi, setVapi] = useState<Vapi | null>(null);
   const [isCallActive, setIsCallActive] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -72,6 +76,73 @@ export default function VoiceDemo() {
     }
   };
 
+  // Compact version for hero section
+  if (compact) {
+    return (
+      <div className="space-y-3">
+        {/* Call Button */}
+        <AnimatePresence mode="wait">
+          {!isCallActive && !isConnecting ? (
+            <Button
+              onClick={startCall}
+              size="lg"
+              className="w-full group shadow-lg"
+              variant="default"
+            >
+              <Phone className="mr-2 h-4 w-4 group-hover:rotate-12 transition-transform" />
+              Start Demo Call
+            </Button>
+          ) : isConnecting ? (
+            <Button size="lg" disabled className="w-full">
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Connecting...
+            </Button>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-green-500/20 border border-green-500/50">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-sm font-medium text-green-700 dark:text-green-400">
+                  Call Active
+                </span>
+                {isSpeaking && <Volume2 className="w-4 h-4 text-green-600 animate-pulse ml-2" />}
+              </div>
+              <Button
+                onClick={endCall}
+                size="lg"
+                variant="destructive"
+                className="w-full"
+              >
+                <PhoneOff className="mr-2 h-4 w-4" />
+                End Call
+              </Button>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* Compact Transcript */}
+        {transcript.length > 0 && (
+          <div className="p-3 rounded-lg bg-secondary/30 border border-border max-h-32 overflow-y-auto text-xs space-y-1">
+            {transcript.slice(-3).map((line, idx) => (
+              <p
+                key={idx}
+                className={line.startsWith('AI:') ? 'text-primary font-medium' : 'text-foreground'}
+              >
+                {line}
+              </p>
+            ))}
+          </div>
+        )}
+
+        {!isCallActive && !isConnecting && (
+          <p className="text-xs text-center text-muted-foreground">
+            ✨ Try asking about pricing or availability
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  // Full version for dedicated section
   return (
     <Card className="relative overflow-hidden border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-background to-background p-6 md:p-8">
       {/* Animated background */}
