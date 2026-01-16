@@ -110,7 +110,7 @@ export default function LandingPage() {
             >
               {/* Social proof badge */}
               <motion.div variants={fadeInUp} className="flex justify-center lg:justify-start mb-6">
-                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-card border border-border">
+                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-accent/10 border border-accent/20">
                   <div className="flex -space-x-2">
                     {[1,2,3,4].map((i) => (
                       <div key={i} className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-background flex items-center justify-center">
@@ -119,7 +119,7 @@ export default function LandingPage() {
                     ))}
                   </div>
                   <span className="text-sm text-muted-foreground">
-                    <span className="text-foreground font-semibold">500+</span> detailers recovering leads
+                    <span className="text-foreground font-semibold">500+ detailing shops</span> never miss calls
                   </span>
                 </div>
               </motion.div>
@@ -128,9 +128,9 @@ export default function LandingPage() {
                 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-foreground leading-[1.1] mb-6 tracking-tight"
                 variants={fadeInUp}
               >
-                Never Miss a{" "}
+                Your Phone Rings.{" "}
                 <span className="relative inline-block">
-                  <span className="text-gradient-primary">$150+ Lead</span>
+                  <span className="text-gradient-primary">You're Waxing</span>
                   <motion.div
                     className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-primary to-accent rounded-full"
                     initial={{ scaleX: 0 }}
@@ -138,15 +138,15 @@ export default function LandingPage() {
                     transition={{ delay: 0.8, duration: 0.6 }}
                   />
                 </span>
-                {" "}Again
+                <br />
+                <span className="text-muted-foreground font-semibold text-3xl sm:text-4xl lg:text-5xl">We Book the Detail.</span>
               </motion.h1>
 
               <motion.p
                 className="text-lg sm:text-xl text-muted-foreground mb-8 leading-relaxed"
                 variants={fadeInUp}
               >
-                DetailPilotAI <span className="text-foreground font-semibold">answers instantly, qualifies leads, and books jobs automatically</span> —
-                while you're under the hood.
+                AI-powered receptionist built specifically for auto detailers. <span className="text-foreground font-semibold">Answers calls, qualifies leads, books appointments</span> — while you're polishing that G-Wagon.
               </motion.p>
 
               <motion.div
@@ -165,7 +165,7 @@ export default function LandingPage() {
                       <Star key={i} className="w-4 h-4 fill-accent text-accent" />
                     ))}
                   </div>
-                  <span className="font-medium">4.9/5 from 200+ shops</span>
+                  <span className="font-medium">4.9/5 from 200+ detail shops</span>
                 </div>
               </motion.div>
 
@@ -274,21 +274,21 @@ export default function LandingPage() {
       </section>
 
       {/* Stats Bar */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 border-y border-border bg-card/50">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 border-y border-border bg-gradient-to-r from-card/50 via-accent/5 to-card/50">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <StatItem value="71%" label="Average recovery rate" icon={<TrendingUp className="w-5 h-5" />} />
-            <StatItem value="< 5s" label="Response time" icon={<Timer className="w-5 h-5" />} />
-            <StatItem value="$540" label="Avg revenue recovered/week" icon={<DollarSign className="w-5 h-5" />} />
-            <StatItem value="24/7" label="Always-on coverage" icon={<Clock className="w-5 h-5" />} />
+            <StatItem value="71%" label="Leads captured" icon={<TrendingUp className="w-5 h-5" />} />
+            <StatItem value="2 sec" label="AI answers in" icon={<Timer className="w-5 h-5" />} />
+            <StatItem value="$680" label="Avg recovered/week" icon={<DollarSign className="w-5 h-5" />} />
+            <StatItem value="24/7" label="Never miss a detail" icon={<Clock className="w-5 h-5" />} />
           </div>
         </div>
       </section>
 
       {/* Problem Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-accent/5 to-transparent">
         <div className="max-w-6xl mx-auto">
-          <motion.div 
+          <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -296,13 +296,13 @@ export default function LandingPage() {
           >
             <Badge variant="outline" className="mb-4 px-4 py-1.5">
               <PhoneOff className="w-3 h-3 mr-1.5" />
-              The Problem
+              Sound Familiar?
             </Badge>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-              Right Now, You're Losing Jobs
+              The Detail Shop Dilemma
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Every time your phone rings while you're detailing, you face an impossible choice.
+              You're 3 hours into a paint correction. Phone rings. Do you strip off gloves and risk contamination, or let a $250 ceramic coating walk?
             </p>
           </motion.div>
 
@@ -311,21 +311,21 @@ export default function LandingPage() {
               icon={<PhoneOff className="w-6 h-6" />}
               stat="5-8"
               label="Missed calls per week"
-              description="You can't answer while you're waxing a hood or cleaning an interior."
+              description="Hands covered in polish? Can't answer during a 6-hour detail job."
               delay={0}
             />
             <ProblemCard
               icon={<DollarSign className="w-6 h-6" />}
               stat="$150-300"
-              label="Lost per missed call"
-              description="That's a detail job walking to your competitor down the street."
+              label="Per missed detail"
+              description="That was a full interior + ceramic coating. Now it's at Shine Pro down the street."
               delay={0.1}
             />
             <ProblemCard
               icon={<Users className="w-6 h-6" />}
               stat="80%"
-              label="Won't leave a voicemail"
-              description="They'll just call the next detailer on Google instead."
+              label="Won't leave voicemail"
+              description="They Google 'car detailing near me' and call the next shop in 30 seconds."
               delay={0.2}
             />
           </div>
@@ -333,9 +333,9 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-card/50 to-transparent">
+      <section id="how-it-works" className="py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <motion.div 
+          <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -346,46 +346,46 @@ export default function LandingPage() {
               How It Works
             </Badge>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-              Never Miss Another Job
+              Keep Detailing. We'll Handle the Phone.
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              DetailPilotAI works in the background while you focus on what you do best.
+              Our AI understands detailing. Knows your services. Books the jobs. You keep polishing.
             </p>
           </motion.div>
 
           <div className="relative">
             {/* Connection line */}
             <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-border to-transparent -translate-y-1/2" />
-            
+
             <div className="grid md:grid-cols-4 gap-8">
               <StepCard
                 number="1"
                 icon={<PhoneIncoming className="w-6 h-6" />}
-                title="Call Comes In"
-                description="You're busy detailing. The call goes to voicemail."
+                title="Customer Calls"
+                description="Phone rings while you're doing a stage 2 paint correction."
                 delay={0}
               />
               <StepCard
                 number="2"
-                icon={<MessageSquare className="w-6 h-6" />}
-                title="Instant Text"
-                description="Within 5 seconds, they get your custom message."
+                icon={<Bot className="w-6 h-6" />}
+                title="AI Answers"
+                description="Picks up in 2 seconds. Sounds human. Knows your services & pricing."
                 delay={0.1}
                 highlighted
+                badge="Pro"
               />
               <StepCard
                 number="3"
-                icon={<Bot className="w-6 h-6" />}
-                title="AI Answers"
-                description="Questions about pricing? Hours? AI handles it."
+                icon={<MessageSquare className="w-6 h-6" />}
+                title="Collects Info"
+                description="Name, car type, service needed, when they want it done."
                 delay={0.2}
-                badge="Pro"
               />
               <StepCard
                 number="4"
                 icon={<Calendar className="w-6 h-6" />}
-                title="Job Booked"
-                description="They book directly. You see it in your dashboard."
+                title="Lead in Dashboard"
+                description="Full details + recording waiting for you. Book it when you're done."
                 delay={0.3}
               />
             </div>
@@ -413,40 +413,40 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <FeatureCard
-              icon={<Zap className="w-6 h-6" />}
-              title="Instant SMS Follow-up"
-              description="Custom text message sent within seconds of a missed call."
+              icon={<Bot className="w-6 h-6" />}
+              title="Answers Like a Detailer"
+              description="Trained on detailing lingo. Knows ceramic coating from wax. Explains packages clearly."
+              badge="Pro"
               delay={0}
             />
             <FeatureCard
               icon={<Calendar className="w-6 h-6" />}
-              title="Booking Link Included"
-              description="Your calendar link goes with every message. Easy self-booking."
+              title="Books Appointments"
+              description="Collects car type, service needed, preferred date. Sends you qualified leads instantly."
               delay={0.1}
             />
             <FeatureCard
-              icon={<Bot className="w-6 h-6" />}
-              title="AI FAQ Answering"
-              description="Handle pricing questions, hours, and service area automatically."
-              badge="Pro"
+              icon={<MessageSquare className="w-6 h-6" />}
+              title="Handles Common Questions"
+              description="'How much for SUV interior?' 'Do you do paint correction?' AI answers based on your pricing."
               delay={0.2}
             />
             <FeatureCard
               icon={<BarChart3 className="w-6 h-6" />}
-              title="Command Center"
-              description="See every lead, every conversation, every booking in one place."
+              title="Detailer Dashboard"
+              description="See every lead with car details, service requested, and full call recording."
               delay={0.3}
             />
             <FeatureCard
-              icon={<Bell className="w-6 h-6" />}
-              title="Smart Notifications"
-              description="Know when high-intent leads need your attention."
+              icon={<Shield className="w-6 h-6" />}
+              title="Smart Caller ID"
+              description="Regular customers and vendors bypass AI. New leads get the full treatment."
               delay={0.4}
             />
             <FeatureCard
-              icon={<Shield className="w-6 h-6" />}
-              title="Known Caller Filter"
-              description="Family and vendors? Never auto-texted. You're in control."
+              icon={<Bell className="w-6 h-6" />}
+              title="Hot Lead Alerts"
+              description="'G-Wagon wants full detail + ceramic coating ASAP' → Instant text to your phone."
               delay={0.5}
             />
           </div>
@@ -472,21 +472,21 @@ export default function LandingPage() {
               title="Without DetailPilotAI"
               isNegative
               items={[
-                "Missed calls go to voicemail (80% don't leave one)",
-                "Leads call your competitors instead",
-                "You stress about missing calls while working",
-                "No idea how many jobs you're losing",
-                "Manually texting back hours later"
+                "Phone rings during paint correction → you ignore it → they call Mobile Detail Pro instead",
+                "Customer asks 'How much for ceramic coating?' → voicemail → no callback → lost $400",
+                "5-8 missed calls per week = $1,200-$2,400 walking out the door monthly",
+                "Stress every time your phone buzzes while you're waxing",
+                "No clue how many G-Wagons you're missing"
               ]}
             />
             <ComparisonCard
               title="With DetailPilotAI"
               items={[
-                "Every missed call gets an instant text back",
-                "Leads book directly from your message",
-                "Work stress-free knowing leads are handled",
-                "Dashboard shows exactly what's happening",
-                "AI handles common questions for you"
+                "AI picks up in 2 seconds, sounds professional, knows your packages",
+                "Answers pricing, availability, what services you offer while you work",
+                "Collects name, car, service needed → sends you hot lead with recording",
+                "Detail in peace knowing every call is captured",
+                "Dashboard shows exactly which leads are ready to book"
               ]}
             />
           </div>
@@ -507,10 +507,10 @@ export default function LandingPage() {
               Simple Pricing
             </Badge>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-              Pay Less Than One Lost Job
+              Costs Less Than One Ceramic Coating
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              DetailPilotAI pays for itself after recovering just one job per month.
+              Recover one detail per month and DetailPilotAI pays for itself. Most shops book 3-5 extra details in week one.
             </p>
           </motion.div>
 
@@ -537,37 +537,37 @@ export default function LandingPage() {
                 </div>
 
                 <div className="space-y-4 mb-8">
-                  <PricingFeature 
-                    title="AI answers every call 24/7" 
-                    description="Sounds natural, picks up in 2 seconds" 
+                  <PricingFeature
+                    title="AI answers every call 24/7"
+                    description="Trained on detailing. Picks up in 2 seconds, sounds professional"
                   />
-                  <PricingFeature 
-                    title="Collects booking information" 
-                    description="Name, phone, vehicle, service, preferred date" 
+                  <PricingFeature
+                    title="Knows your services & pricing"
+                    description="Ceramic coating, paint correction, interior, packages - you customize it all"
                   />
-                  <PricingFeature 
-                    title="Instant lead notifications" 
-                    description="Text + email with details within seconds" 
+                  <PricingFeature
+                    title="Collects lead details automatically"
+                    description="Name, phone, car type, service needed, when they want it"
                   />
-                  <PricingFeature 
-                    title="Call recordings & transcripts" 
-                    description="Listen to every call, read transcripts" 
+                  <PricingFeature
+                    title="Instant hot lead alerts"
+                    description="'G-Wagon wants ceramic coating + PPF' → Text to your phone immediately"
                   />
-                  <PricingFeature 
-                    title="Lead dashboard" 
-                    description="Track leads, mark contacted/booked" 
+                  <PricingFeature
+                    title="Call recordings & transcripts"
+                    description="Hear exactly what customer said, read full conversation"
                   />
-                  <PricingFeature 
-                    title="Known caller filter" 
-                    description="Family/friends bypass AI (optional)" 
+                  <PricingFeature
+                    title="Detailer dashboard"
+                    description="See all leads with car details, service, contact info"
                   />
-                  <PricingFeature 
-                    title="Unlimited calls" 
-                    description="No per-call fees, no hidden costs" 
+                  <PricingFeature
+                    title="Smart caller filtering"
+                    description="Regular customers & vendors bypass AI - only new leads handled"
                   />
-                  <PricingFeature 
-                    title="Cancel anytime" 
-                    description="No contract, no commitments" 
+                  <PricingFeature
+                    title="Unlimited calls + cancel anytime"
+                    description="No per-call fees. No contract. Cancel with 1 click."
                   />
                 </div>
 
@@ -617,33 +617,33 @@ export default function LandingPage() {
                 <p className="text-sm text-muted-foreground mb-6">Limited Time</p>
 
                 <p className="text-foreground mb-4">
-                  First 20 customers get lifetime founding member pricing
+                  First 20 detailing shops get lifetime founding member pricing
                 </p>
 
                 <div className="mb-4">
                   <span className="text-4xl font-bold text-accent">$99</span>
-                  <span className="text-foreground font-semibold">/month forever</span>
+                  <span className="text-foreground font-semibold">/month locked in forever</span>
                 </div>
 
-                <p className="text-success font-medium mb-2">(Save $50 every month)</p>
+                <p className="text-success font-medium mb-2">(Save $50/month = One free interior detail)</p>
                 <p className="text-sm text-muted-foreground mb-6">
-                  Regular price: <span className="line-through">$149/month</span>
+                  Regular price: <span className="line-through">$149/month</span> after founding spots fill
                 </p>
 
                 <div className="bg-background/50 rounded-lg p-3 mb-6">
-                  <p className="text-foreground font-semibold">Spots remaining: <span className="text-accent">15/20</span></p>
+                  <p className="text-foreground font-semibold">Detailing shops remaining: <span className="text-accent">15/20</span></p>
                 </div>
 
                 <Link to="/signup" className="block">
-                  <Button variant="accent" size="lg" className="w-full text-base group">
-                    Lock In $99/mo Rate
+                  <Button variant="accent" size="lg" className="w-full text-base group shadow-2xl shadow-accent/30">
+                    Lock In $99/mo Founding Rate
                     <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
 
                 <p className="text-sm text-muted-foreground mt-4 flex items-center justify-center gap-1">
                   <Clock className="w-4 h-4" />
-                  Offer expires when all 20 spots are filled
+                  Price goes to $149/mo when all founding spots are gone
                 </p>
               </div>
             </Card>
@@ -671,24 +671,24 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-3 gap-6">
             <TestimonialCard
-              quote="Recovered 3 jobs in my first week. That's over $400 that would've walked. The ROI is insane."
+              quote="First week: AI booked 2 ceramic coatings and a full interior while I was elbow-deep in a Tahoe. That's $680 I would've missed. Paid for itself 7x over already."
               author="Marcus J."
-              business="Pristine Auto Detailing"
-              stat="3 jobs recovered"
+              business="Elite Auto Detail - Miami"
+              stat="$680 week 1"
               delay={0}
             />
             <TestimonialCard
-              quote="The AI answering is a game-changer. It handles all those 'how much for an SUV?' texts while I work."
+              quote="I do mobile detailing solo. Phone used to ring off the hook while I'm working. Now the AI handles it all. It even knows to say I'm booked 3 weeks out for paint corrections."
               author="David R."
-              business="Shine Mobile Detail"
-              stat="71% recovery rate"
+              business="Shine Mobile Detail - Dallas"
+              stat="71% recovery"
               delay={0.1}
             />
             <TestimonialCard
-              quote="Setup took literally 5 minutes. Now I don't stress about my phone while detailing. Life-changing."
+              quote="Setup was 5 minutes. Put in my packages and pricing. Now it books my $200+ details automatically. I just show up and detail. Game changer."
               author="Sarah K."
-              business="Fresh Start Detailing"
-              stat="$540/week recovered"
+              business="Precision Detailing - Phoenix"
+              stat="4-6 details/week"
               delay={0.2}
             />
           </div>
@@ -710,25 +710,29 @@ export default function LandingPage() {
           </motion.div>
 
           <div className="space-y-4">
-            <FAQItem 
-              question="Will it text my friends and family?"
-              answer="No. DetailPilotAI only texts callers who you missed while busy. You can also add known numbers (family, vendors) to a 'never auto-text' list."
+            <FAQItem
+              question="Does it know detailing terminology?"
+              answer="Yes. The AI is trained on auto detailing. It knows ceramic coating, paint correction, clay bar, PPF, interior shampooing, etc. You customize your services and pricing during setup, and it answers based on that."
             />
-            <FAQItem 
-              question="Does it replace my phone?"
-              answer="Not at all. DetailPilotAI works alongside your existing phone. When you miss a call, it steps in to follow up automatically."
+            <FAQItem
+              question="Will it call my regular customers or vendors?"
+              answer="No. You can whitelist numbers (regular customers, product suppliers, family). They'll never get the AI. Only new leads who don't leave voicemail get handled."
             />
-            <FAQItem 
-              question="Can I turn AI off?"
-              answer="Absolutely. AI call answering is a Pro feature you can toggle on/off anytime. Starter plan uses SMS only."
+            <FAQItem
+              question="What if someone asks for a custom quote?"
+              answer="AI collects all the details (car type, condition, services wanted) and sends you a hot lead notification. You call them back with the custom quote. It doesn't give prices it's not trained on."
             />
-            <FAQItem 
-              question="How fast does it respond?"
-              answer="Within 5 seconds. The moment a call goes to voicemail, DetailPilotAI sends your custom message."
+            <FAQItem
+              question="Does this work for mobile detailing?"
+              answer="Absolutely. The AI explains you're mobile, asks for their location, and books the appointment. Works great for mobile-only, shop-only, or hybrid setups."
             />
-            <FAQItem 
-              question="What if I want to cancel?"
-              answer="Cancel anytime with one click. No contracts, no hidden fees, no hassle. Your data is yours."
+            <FAQItem
+              question="How fast is setup?"
+              answer="2 minutes. Enter your shop name, services you offer, your pricing, and business hours. The AI trains on your info instantly. You're live immediately."
+            />
+            <FAQItem
+              question="Can I cancel anytime?"
+              answer="Yes. No contracts. Cancel with one click. If you're not booking more details, we don't deserve your money."
             />
           </div>
         </div>
@@ -749,20 +753,20 @@ export default function LandingPage() {
             
             <div className="relative">
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-                Stop Losing Jobs Today
+                Stop Losing Details to Your Competitors
               </h2>
               <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
-                Every day without DetailPilotAI is another 5-8 potential jobs walking to your competition. 
-                Start your free trial now.
+                Every missed call is a $150-300 detail going to the shop down the street.
+                Let AI handle your phone while you handle their cars.
               </p>
               <Link to="/signup">
-                <Button variant="hero" size="xl" className="text-base group">
-                  Start 7-Day Free Trial
+                <Button variant="hero" size="xl" className="text-base group shadow-2xl shadow-accent/30">
+                  Start Free Trial - Book More Details
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
               <p className="text-sm text-muted-foreground mt-4">
-                No credit card required • Setup in 2 minutes
+                No credit card • 2-min setup • Built for detailers
               </p>
             </div>
           </motion.div>
