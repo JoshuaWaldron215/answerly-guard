@@ -34,7 +34,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-orange-500 flex items-center justify-center">
               <Phone className="w-4 h-4 text-white" />
             </div>
-            <span className="text-xl font-bold text-foreground">Answerly</span>
+            <span className="text-xl font-bold text-foreground">DetailPilotAI</span>
           </div>
         </div>
         <nav className="flex-1 p-4">
@@ -77,7 +77,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-orange-500 flex items-center justify-center">
               <Phone className="w-4 h-4 text-white" />
             </div>
-            <span className="text-lg font-bold text-foreground">Answerly</span>
+            <span className="text-lg font-bold text-foreground">DetailPilotAI</span>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />

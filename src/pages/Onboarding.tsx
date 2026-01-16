@@ -67,7 +67,7 @@ export default function Onboarding() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-orange-500 flex items-center justify-center">
               <Phone className="w-4 h-4 text-white" />
             </div>
-            <span className="text-xl font-bold text-foreground">Answerly</span>
+            <span className="text-xl font-bold text-foreground">DetailPilotAI</span>
           </div>
           <Badge variant="secondary" className="text-xs">
             ~2 minutes left
@@ -143,7 +143,7 @@ export default function Onboarding() {
                       className="w-full px-4 py-3 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                     />
                     <p className="text-xs text-muted-foreground mt-2">
-                      This is the number Answerly will monitor for missed calls
+                      This is the number DetailPilotAI will monitor for missed calls
                     </p>
                   </div>
                   <div>
@@ -409,7 +409,7 @@ export default function Onboarding() {
                       <div>
                         <h4 className="font-semibold text-foreground mb-1">You're protected</h4>
                         <p className="text-sm text-muted-foreground">
-                          Answerly will catch missed calls and follow up automatically. 
+                          DetailPilotAI will catch missed calls and follow up automatically. 
                           No more lost jobs.
                         </p>
                       </div>

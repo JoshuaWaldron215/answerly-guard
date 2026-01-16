@@ -94,7 +94,7 @@ export default function Settings() {
             Settings
           </h1>
           <p className="text-muted-foreground">
-            Manage your Answerly configuration
+            Manage your DetailPilotAI configuration
           </p>
         </motion.div>
 

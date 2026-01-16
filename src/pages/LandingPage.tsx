@@ -64,7 +64,7 @@ export default function LandingPage() {
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-orange-500 flex items-center justify-center shadow-lg">
                 <Phone className="w-4 h-4 text-white" />
               </div>
-              <span className="text-xl font-bold text-foreground">Answerly</span>
+              <span className="text-xl font-bold text-foreground">DetailPilotAI</span>
             </div>
             <div className="hidden md:flex items-center gap-8">
               <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How It Works</a>
@@ -142,7 +142,7 @@ export default function LandingPage() {
               variants={fadeInUp}
             >
               Every missed call costs you <span className="text-foreground font-medium">$150-300</span>. 
-              Answerly texts back instantly, answers questions with AI, and books the job — 
+              DetailPilotAI texts back instantly, answers questions with AI, and books the job — 
               <span className="text-foreground font-medium"> while you're under the hood</span>.
             </motion.p>
             
@@ -216,7 +216,7 @@ export default function LandingPage() {
               {/* Dashboard screenshot */}
               <img 
                 src={dashboardPreview} 
-                alt="Answerly Command Center Dashboard" 
+                alt="DetailPilotAI Command Center Dashboard" 
                 className="w-full"
               />
               
@@ -310,7 +310,7 @@ export default function LandingPage() {
               Never Miss Another Job
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Answerly works in the background while you focus on what you do best.
+              DetailPilotAI works in the background while you focus on what you do best.
             </p>
           </motion.div>
 
@@ -424,13 +424,13 @@ export default function LandingPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Without Answerly vs. With Answerly
+              Without DetailPilotAI vs. With DetailPilotAI
             </h2>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-8">
             <ComparisonCard
-              title="Without Answerly"
+              title="Without DetailPilotAI"
               isNegative
               items={[
                 "Missed calls go to voicemail (80% don't leave one)",
@@ -441,7 +441,7 @@ export default function LandingPage() {
               ]}
             />
             <ComparisonCard
-              title="With Answerly"
+              title="With DetailPilotAI"
               items={[
                 "Every missed call gets an instant text back",
                 "Leads book directly from your message",
@@ -471,7 +471,7 @@ export default function LandingPage() {
               Pay Less Than One Lost Job
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Answerly pays for itself after recovering just one job per month.
+              DetailPilotAI pays for itself after recovering just one job per month.
             </p>
           </motion.div>
 
@@ -626,7 +626,7 @@ export default function LandingPage() {
               Testimonials
             </Badge>
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Detailers Love Answerly
+              Detailers Love DetailPilotAI
             </h2>
           </motion.div>
 
@@ -673,11 +673,11 @@ export default function LandingPage() {
           <div className="space-y-4">
             <FAQItem 
               question="Will it text my friends and family?"
-              answer="No. Answerly only texts callers who you missed while busy. You can also add known numbers (family, vendors) to a 'never auto-text' list."
+              answer="No. DetailPilotAI only texts callers who you missed while busy. You can also add known numbers (family, vendors) to a 'never auto-text' list."
             />
             <FAQItem 
               question="Does it replace my phone?"
-              answer="Not at all. Answerly works alongside your existing phone. When you miss a call, it steps in to follow up automatically."
+              answer="Not at all. DetailPilotAI works alongside your existing phone. When you miss a call, it steps in to follow up automatically."
             />
             <FAQItem 
               question="Can I turn AI off?"
@@ -685,7 +685,7 @@ export default function LandingPage() {
             />
             <FAQItem 
               question="How fast does it respond?"
-              answer="Within 5 seconds. The moment a call goes to voicemail, Answerly sends your custom message."
+              answer="Within 5 seconds. The moment a call goes to voicemail, DetailPilotAI sends your custom message."
             />
             <FAQItem 
               question="What if I want to cancel?"
@@ -713,7 +713,7 @@ export default function LandingPage() {
                 Stop Losing Jobs Today
               </h2>
               <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
-                Every day without Answerly is another 5-8 potential jobs walking to your competition. 
+                Every day without DetailPilotAI is another 5-8 potential jobs walking to your competition. 
                 Start your free trial now.
               </p>
               <Link to="/signup">
@@ -737,7 +737,7 @@ export default function LandingPage() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-orange-500 flex items-center justify-center">
               <Phone className="w-4 h-4 text-white" />
             </div>
-            <span className="text-lg font-bold text-foreground">Answerly</span>
+            <span className="text-lg font-bold text-foreground">DetailPilotAI</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
@@ -745,7 +745,7 @@ export default function LandingPage() {
             <a href="#" className="hover:text-foreground transition-colors">Contact</a>
           </div>
           <p className="text-sm text-muted-foreground">
-            © 2025 Answerly.io. All rights reserved.
+            © 2025 DetailPilotAI.io. All rights reserved.
           </p>
         </div>
       </footer>

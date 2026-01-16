@@ -26,7 +26,16 @@ export default function Login() {
       await signIn(email, password);
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in');
+      console.error('Login error:', err);
+      // Better error messages for users
+      const errorMessage = err.message || 'Failed to sign in';
+      if (errorMessage.includes('Invalid login credentials')) {
+        setError('Invalid email or password. Please try again.');
+      } else if (errorMessage.includes('Email not confirmed')) {
+        setError('Please verify your email before signing in. Check your inbox.');
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
