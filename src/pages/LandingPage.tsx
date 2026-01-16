@@ -32,6 +32,26 @@ import {
   Award,
   ChevronDown
 } from "lucide-react";
+
+// Custom Logo Component
+const Logo = ({ size = "md" }: { size?: "sm" | "md" }) => {
+  const dimensions = size === "sm" ? { w: 32, h: 32 } : { w: 36, h: 36 };
+
+  return (
+    <svg width={dimensions.w} height={dimensions.h} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="40" height="40" rx="8" fill="url(#gradient)" />
+      <path d="M12 28V15C12 13.8954 12.8954 13 14 13H26C27.1046 13 28 13.8954 28 15V18" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+      <circle cx="24" cy="24" r="5" fill="white" fillOpacity="0.2"/>
+      <path d="M26.5 22L24 24.5L21.5 22" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <defs>
+        <linearGradient id="gradient" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#0099CC"/>
+          <stop offset="1" stopColor="#0077AA"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+};
 // Dashboard preview - will use placeholder until image is added
 const dashboardPreview = "/placeholder.svg";
 
@@ -72,11 +92,8 @@ export default function LandingPage() {
       <nav className="fixed top-0 left-0 right-0 z-50 glass glass-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-tr from-accent/20 to-transparent"></div>
-                <span className="text-xl relative z-10">🚗</span>
-              </div>
+            <div className="flex items-center gap-2.5">
+              <Logo />
               <span className="text-xl font-bold text-foreground">DetailPilot<span className="text-primary">AI</span></span>
             </div>
             <div className="hidden md:flex items-center gap-8">
@@ -671,11 +688,8 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-border">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-tr from-accent/20 to-transparent"></div>
-              <span className="text-lg relative z-10">🚗</span>
-            </div>
+          <div className="flex items-center gap-2.5">
+            <Logo size="sm" />
             <span className="text-lg font-bold text-foreground">DetailPilot<span className="text-primary">AI</span></span>
           </div>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
