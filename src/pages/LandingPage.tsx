@@ -101,305 +101,162 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-28 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Animated background gradients */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-1/4 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
-          <div className="absolute top-40 right-1/4 w-[400px] h-[400px] bg-accent/15 rounded-full blur-[100px] animate-pulse animation-delay-500" />
-        </div>
-
-        <motion.div
-          className="max-w-7xl mx-auto relative"
-          style={{ opacity: heroOpacity, scale: heroScale }}
-        >
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <section className="relative pt-32 pb-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left: Hero Content */}
-            <motion.div
-              className="text-center lg:text-left"
-              initial="initial"
-              animate="animate"
-              variants={staggerContainer}
-            >
+            <div className="text-center lg:text-left">
               {/* Social proof badge */}
-              <motion.div variants={fadeInUp} className="flex justify-center lg:justify-start mb-6">
-                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-accent/10 border border-accent/20">
-                  <div className="flex -space-x-2">
-                    {[1,2,3,4].map((i) => (
-                      <div key={i} className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-background flex items-center justify-center">
-                        <span className="text-[10px] font-medium text-foreground">{['MJ', 'DR', 'SK', 'TC'][i-1]}</span>
-                      </div>
+              <div className="flex justify-center lg:justify-start mb-8">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-background">
+                  <div className="flex -space-x-1">
+                    {[1,2,3].map((i) => (
+                      <div key={i} className="w-6 h-6 rounded-full bg-primary/10 border-2 border-background" />
                     ))}
                   </div>
                   <span className="text-sm text-muted-foreground">
-                    <span className="text-foreground font-semibold">500+ detailing shops</span> never miss calls
+                    <span className="font-semibold text-foreground">500+</span> detailing shops
                   </span>
                 </div>
-              </motion.div>
+              </div>
 
-              <motion.h1
-                className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-foreground leading-[1.1] mb-6 tracking-tight"
-                variants={fadeInUp}
-              >
-                Your Phone Rings.{" "}
-                <span className="relative inline-block">
-                  <span className="text-gradient-primary">You're Waxing</span>
-                  <motion.div
-                    className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-primary to-accent rounded-full"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ delay: 0.8, duration: 0.6 }}
-                  />
-                </span>
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-foreground leading-[1.1] mb-6">
+                You're Waxing.
                 <br />
-                <span className="text-muted-foreground font-semibold text-3xl sm:text-4xl lg:text-5xl">We Book the Detail.</span>
-              </motion.h1>
+                <span className="text-primary">We Book the Detail.</span>
+              </h1>
 
-              <motion.p
-                className="text-lg sm:text-xl text-muted-foreground mb-8 leading-relaxed"
-                variants={fadeInUp}
-              >
-                AI-powered receptionist built specifically for auto detailers. <span className="text-foreground font-semibold">Answers calls, qualifies leads, books appointments</span> — while you're polishing that G-Wagon.
-              </motion.p>
+              <p className="text-xl text-muted-foreground mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                AI receptionist that picks up your calls in 2 seconds, knows your services, and books jobs — while you're polishing.
+              </p>
 
-              <motion.div
-                className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-8"
-                variants={fadeInUp}
-              >
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-8">
                 <Link to="/signup">
-                  <Button variant="hero" size="xl" className="w-full sm:w-auto text-base group shadow-2xl shadow-accent/20">
+                  <Button size="xl" className="w-full sm:w-auto text-lg px-8 py-6 shadow-lg bg-primary hover:bg-primary/90">
                     Start Free Trial
-                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <div className="flex -space-x-1">
+                <div className="flex items-center gap-2 text-sm">
+                  <div className="flex">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="w-4 h-4 fill-accent text-accent" />
                     ))}
                   </div>
-                  <span className="font-medium">4.9/5 from 200+ detail shops</span>
-                </div>
-              </motion.div>
-
-              {/* Trust badges */}
-              <motion.div
-                className="flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-muted-foreground"
-                variants={fadeInUp}
-              >
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-success" />
-                  No credit card required
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-success" />
-                  2-min setup
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-success" />
-                  Cancel anytime
-                </div>
-              </motion.div>
-            </motion.div>
-
-            {/* Right: Compact Voice Demo */}
-            <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3, duration: 0.8 }}
-              className="hidden lg:block"
-            >
-              <div className="relative">
-                {/* Decorative glow */}
-                <div className="absolute -inset-4 bg-gradient-to-tr from-primary/20 via-accent/20 to-transparent rounded-3xl blur-3xl" />
-
-                {/* Compact demo card */}
-                <Card className="relative border-2 border-primary/20 bg-card/95 backdrop-blur-xl p-6 shadow-2xl">
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-xl bg-primary/10">
-                        <Phone className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-foreground">Try Our AI Now</h3>
-                        <p className="text-sm text-muted-foreground">Talk to the AI receptionist</p>
-                      </div>
-                    </div>
-
-                    {/* Mini voice demo */}
-                    <VoiceDemo compact />
-                  </div>
-                </Card>
-              </div>
-            </motion.div>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Dashboard Preview - Full Width Showcase */}
-      <section className="relative px-4 sm:px-6 lg:px-8 pb-20">
-        <motion.div 
-          className="max-w-6xl mx-auto"
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <div className="relative">
-            {/* Glow behind dashboard */}
-            <div className="absolute -inset-4 bg-gradient-to-b from-primary/20 via-accent/10 to-transparent rounded-3xl blur-2xl" />
-            
-            {/* Browser chrome */}
-            <div className="relative bg-card border border-border rounded-2xl overflow-hidden shadow-2xl">
-              {/* Browser header */}
-              <div className="flex items-center gap-2 px-4 py-3 bg-secondary/50 border-b border-border">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-destructive/50" />
-                  <div className="w-3 h-3 rounded-full bg-warning/50" />
-                  <div className="w-3 h-3 rounded-full bg-success/50" />
-                </div>
-                <div className="flex-1 flex justify-center">
-                  <div className="px-4 py-1 rounded-lg bg-background/80 text-xs text-muted-foreground">
-                    app.answerly.io/dashboard
-                  </div>
+                  <span className="text-muted-foreground">4.9/5 from detailers</span>
                 </div>
               </div>
-              
-              {/* Dashboard screenshot */}
-              <img 
-                src={dashboardPreview} 
-                alt="DetailPilotAI Command Center Dashboard" 
-                className="w-full"
-              />
-              
-              {/* Video placeholder overlay - for future video */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer bg-background/50 backdrop-blur-sm">
-                <div className="flex flex-col items-center gap-4">
-                  <div className="w-20 h-20 rounded-full bg-accent flex items-center justify-center shadow-lg shadow-accent/30">
-                    <Play className="w-8 h-8 text-white ml-1" />
-                  </div>
-                  <span className="text-foreground font-medium">Watch Demo Video</span>
-                </div>
+
+              <div className="flex flex-wrap justify-center lg:justify-start gap-4 text-sm text-muted-foreground">
+                <span>✓ No credit card</span>
+                <span>✓ 2-min setup</span>
+                <span>✓ Cancel anytime</span>
               </div>
             </div>
+
+            {/* Right: Voice Demo */}
+            <div className="hidden lg:block">
+              <Card className="border-2 border-primary/20 p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <Phone className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Try the AI</h3>
+                    <p className="text-sm text-muted-foreground">Talk to our receptionist</p>
+                  </div>
+                </div>
+                <VoiceDemo compact />
+              </Card>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* Stats Bar */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 border-y border-border bg-gradient-to-r from-card/50 via-accent/5 to-card/50">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-secondary/30">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <StatItem value="71%" label="Leads captured" icon={<TrendingUp className="w-5 h-5" />} />
-            <StatItem value="2 sec" label="AI answers in" icon={<Timer className="w-5 h-5" />} />
-            <StatItem value="$680" label="Avg recovered/week" icon={<DollarSign className="w-5 h-5" />} />
-            <StatItem value="24/7" label="Never miss a detail" icon={<Clock className="w-5 h-5" />} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+              <div className="text-4xl font-bold text-foreground mb-1">71%</div>
+              <div className="text-sm text-muted-foreground">Leads captured</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-foreground mb-1">2 sec</div>
+              <div className="text-sm text-muted-foreground">AI answers in</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-foreground mb-1">$680</div>
+              <div className="text-sm text-muted-foreground">Avg/week recovered</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-foreground mb-1">24/7</div>
+              <div className="text-sm text-muted-foreground">Never miss a call</div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Problem Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-accent/5 to-transparent">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <Badge variant="outline" className="mb-4 px-4 py-1.5">
-              <PhoneOff className="w-3 h-3 mr-1.5" />
-              Sound Familiar?
-            </Badge>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-              The Detail Shop Dilemma
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              You're 3 hours into a paint correction. Phone rings. Do you strip off gloves and risk contamination, or let a $250 ceramic coating walk?
-            </p>
-          </motion.div>
+      <section className="py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-6">
+            The Detail Shop Dilemma
+          </h2>
+          <p className="text-xl text-muted-foreground mb-12">
+            You're 3 hours into a paint correction. Phone rings. Do you strip off gloves and risk contamination, or let a $250 ceramic coating walk?
+          </p>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            <ProblemCard
-              icon={<PhoneOff className="w-6 h-6" />}
-              stat="5-8"
-              label="Missed calls per week"
-              description="Hands covered in polish? Can't answer during a 6-hour detail job."
-              delay={0}
-            />
-            <ProblemCard
-              icon={<DollarSign className="w-6 h-6" />}
-              stat="$150-300"
-              label="Per missed detail"
-              description="That was a full interior + ceramic coating. Now it's at Shine Pro down the street."
-              delay={0.1}
-            />
-            <ProblemCard
-              icon={<Users className="w-6 h-6" />}
-              stat="80%"
-              label="Won't leave voicemail"
-              description="They Google 'car detailing near me' and call the next shop in 30 seconds."
-              delay={0.2}
-            />
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="text-5xl font-bold text-destructive mb-2">5-8</div>
+              <div className="font-semibold text-foreground mb-2">Missed calls/week</div>
+              <p className="text-sm text-muted-foreground">Can't answer during a 6-hour detail job</p>
+            </div>
+            <div className="text-center">
+              <div className="text-5xl font-bold text-destructive mb-2">$150-300</div>
+              <div className="font-semibold text-foreground mb-2">Per missed detail</div>
+              <p className="text-sm text-muted-foreground">That's a full interior walking to your competitor</p>
+            </div>
+            <div className="text-center">
+              <div className="text-5xl font-bold text-destructive mb-2">80%</div>
+              <div className="font-semibold text-foreground mb-2">Won't leave voicemail</div>
+              <p className="text-sm text-muted-foreground">They Google and call the next shop in 30 seconds</p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <Badge variant="outline" className="mb-4 px-4 py-1.5">
-              <Sparkles className="w-3 h-3 mr-1.5" />
-              How It Works
-            </Badge>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-              Keep Detailing. We'll Handle the Phone.
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Our AI understands detailing. Knows your services. Books the jobs. You keep polishing.
-            </p>
-          </motion.div>
+      <section id="how-it-works" className="py-24 px-4 sm:px-6 lg:px-8 bg-secondary/30">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-4">
+            Keep Detailing. We'll Handle the Phone.
+          </h2>
+          <p className="text-lg text-muted-foreground mb-16 max-w-2xl mx-auto">
+            Our AI understands detailing. Knows your services. Books the jobs.
+          </p>
 
-          <div className="relative">
-            {/* Connection line */}
-            <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-border to-transparent -translate-y-1/2" />
-
-            <div className="grid md:grid-cols-4 gap-8">
-              <StepCard
-                number="1"
-                icon={<PhoneIncoming className="w-6 h-6" />}
-                title="Customer Calls"
-                description="Phone rings while you're doing a stage 2 paint correction."
-                delay={0}
-              />
-              <StepCard
-                number="2"
-                icon={<Bot className="w-6 h-6" />}
-                title="AI Answers"
-                description="Picks up in 2 seconds. Sounds human. Knows your services & pricing."
-                delay={0.1}
-                highlighted
-                badge="Pro"
-              />
-              <StepCard
-                number="3"
-                icon={<MessageSquare className="w-6 h-6" />}
-                title="Collects Info"
-                description="Name, car type, service needed, when they want it done."
-                delay={0.2}
-              />
-              <StepCard
-                number="4"
-                icon={<Calendar className="w-6 h-6" />}
-                title="Lead in Dashboard"
-                description="Full details + recording waiting for you. Book it when you're done."
-                delay={0.3}
-              />
+          <div className="grid md:grid-cols-4 gap-8">
+            <div>
+              <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mb-4 mx-auto">1</div>
+              <h3 className="font-semibold text-foreground mb-2">Customer Calls</h3>
+              <p className="text-sm text-muted-foreground">Phone rings during paint correction</p>
+            </div>
+            <div>
+              <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mb-4 mx-auto">2</div>
+              <h3 className="font-semibold text-foreground mb-2">AI Answers</h3>
+              <p className="text-sm text-muted-foreground">Picks up in 2 sec, knows your prices</p>
+            </div>
+            <div>
+              <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mb-4 mx-auto">3</div>
+              <h3 className="font-semibold text-foreground mb-2">Collects Info</h3>
+              <p className="text-sm text-muted-foreground">Name, car, service, preferred date</p>
+            </div>
+            <div>
+              <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mb-4 mx-auto">4</div>
+              <h3 className="font-semibold text-foreground mb-2">Lead in Dashboard</h3>
+              <p className="text-sm text-muted-foreground">Full details + recording waiting</p>
             </div>
           </div>
         </div>
@@ -407,100 +264,126 @@ export default function LandingPage() {
 
       {/* Features Section */}
       <section id="features" className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <motion.div 
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <Badge variant="outline" className="mb-4 px-4 py-1.5">
-              <Target className="w-3 h-3 mr-1.5" />
-              Features
-            </Badge>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-              Everything You Need to Capture Every Lead
-            </h2>
-          </motion.div>
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-16 text-center">
+            What You Get
+          </h2>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <FeatureCard
-              icon={<Bot className="w-6 h-6" />}
-              title="Answers Like a Detailer"
-              description="Trained on detailing lingo. Knows ceramic coating from wax. Explains packages clearly."
-              badge="Pro"
-              delay={0}
-            />
-            <FeatureCard
-              icon={<Calendar className="w-6 h-6" />}
-              title="Books Appointments"
-              description="Collects car type, service needed, preferred date. Sends you qualified leads instantly."
-              delay={0.1}
-            />
-            <FeatureCard
-              icon={<MessageSquare className="w-6 h-6" />}
-              title="Handles Common Questions"
-              description="'How much for SUV interior?' 'Do you do paint correction?' AI answers based on your pricing."
-              delay={0.2}
-            />
-            <FeatureCard
-              icon={<BarChart3 className="w-6 h-6" />}
-              title="Detailer Dashboard"
-              description="See every lead with car details, service requested, and full call recording."
-              delay={0.3}
-            />
-            <FeatureCard
-              icon={<Shield className="w-6 h-6" />}
-              title="Smart Caller ID"
-              description="Regular customers and vendors bypass AI. New leads get the full treatment."
-              delay={0.4}
-            />
-            <FeatureCard
-              icon={<Bell className="w-6 h-6" />}
-              title="Hot Lead Alerts"
-              description="'G-Wagon wants full detail + ceramic coating ASAP' → Instant text to your phone."
-              delay={0.5}
-            />
+          <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Bot className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground mb-1">Answers Like a Detailer</h3>
+                <p className="text-sm text-muted-foreground">Knows ceramic coating from wax. Explains your packages clearly.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground mb-1">Books Appointments</h3>
+                <p className="text-sm text-muted-foreground">Collects car type, service, date. Sends qualified leads instantly.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <MessageSquare className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground mb-1">Handles Questions</h3>
+                <p className="text-sm text-muted-foreground">"How much for SUV interior?" AI answers based on your pricing.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <BarChart3 className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground mb-1">Dashboard</h3>
+                <p className="text-sm text-muted-foreground">See every lead with car details, service, and call recording.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Shield className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground mb-1">Smart Caller ID</h3>
+                <p className="text-sm text-muted-foreground">Regular customers bypass AI. Only new leads get handled.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Bell className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground mb-1">Hot Lead Alerts</h3>
+                <p className="text-sm text-muted-foreground">"G-Wagon wants ceramic coating" → Instant text to your phone.</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Comparison Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-card/50 to-transparent">
-        <div className="max-w-5xl mx-auto">
-          <motion.div 
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Without DetailPilotAI vs. With DetailPilotAI
-            </h2>
-          </motion.div>
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-secondary/30">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-4xl font-bold text-foreground mb-12 text-center">
+            Before & After
+          </h2>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            <ComparisonCard
-              title="Without DetailPilotAI"
-              isNegative
-              items={[
-                "Phone rings during paint correction → you ignore it → they call Mobile Detail Pro instead",
-                "Customer asks 'How much for ceramic coating?' → voicemail → no callback → lost $400",
-                "5-8 missed calls per week = $1,200-$2,400 walking out the door monthly",
-                "Stress every time your phone buzzes while you're waxing",
-                "No clue how many G-Wagons you're missing"
-              ]}
-            />
-            <ComparisonCard
-              title="With DetailPilotAI"
-              items={[
-                "AI picks up in 2 seconds, sounds professional, knows your packages",
-                "Answers pricing, availability, what services you offer while you work",
-                "Collects name, car, service needed → sends you hot lead with recording",
-                "Detail in peace knowing every call is captured",
-                "Dashboard shows exactly which leads are ready to book"
-              ]}
-            />
+          <div className="grid md:grid-cols-2 gap-12">
+            <div>
+              <h3 className="text-xl font-bold text-destructive mb-6">Without DetailPilotAI</h3>
+              <ul className="space-y-3">
+                <li className="flex gap-3 text-foreground">
+                  <X className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+                  <span>5-8 missed calls = $1,200-$2,400 lost/month</span>
+                </li>
+                <li className="flex gap-3 text-foreground">
+                  <X className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+                  <span>Customers call your competitor instead</span>
+                </li>
+                <li className="flex gap-3 text-foreground">
+                  <X className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+                  <span>Stress every time phone buzzes</span>
+                </li>
+                <li className="flex gap-3 text-foreground">
+                  <X className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+                  <span>No clue how many G-Wagons you're missing</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-success mb-6">With DetailPilotAI</h3>
+              <ul className="space-y-3">
+                <li className="flex gap-3 text-foreground">
+                  <Check className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                  <span>AI picks up in 2 sec, books the job</span>
+                </li>
+                <li className="flex gap-3 text-foreground">
+                  <Check className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                  <span>Every lead captured with full details</span>
+                </li>
+                <li className="flex gap-3 text-foreground">
+                  <Check className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                  <span>Detail in peace, phone is handled</span>
+                </li>
+                <li className="flex gap-3 text-foreground">
+                  <Check className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                  <span>Dashboard shows every opportunity</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
