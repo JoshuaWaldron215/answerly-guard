@@ -18,7 +18,7 @@ interface AppLayoutProps {
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
   { icon: Phone, label: "Calls & Leads", path: "/calls" },
-  { icon: Calendar, label: "Bookings", path: "/bookings" },
+  { icon: Calendar, label: "Calendar", path: "/calendar" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
