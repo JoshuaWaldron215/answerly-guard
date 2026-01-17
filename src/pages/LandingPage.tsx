@@ -279,6 +279,299 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* 3 Pillars - Competitive Moat Section */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-primary/5 to-transparent">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <Badge variant="accent" className="mb-4 px-4 py-1.5">
+              <Sparkles className="w-3 h-3 mr-1.5" />
+              The Complete System
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+              Not Just AI Answering.<br />
+              <span className="text-primary">A Complete Lead-Closing Machine.</span>
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Most "AI receptionists" just pick up the phone. We built 3 systems that work together to turn every call into cash.
+            </p>
+          </motion.div>
+
+          {/* Pillar 1: AI Voice */}
+          <motion.div
+            className="mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <Card className="p-8 lg:p-12 bg-gradient-to-br from-primary/10 via-card to-card border-2 border-primary/30">
+              <div className="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary text-sm font-semibold mb-4">
+                    <Phone className="w-4 h-4" />
+                    Pillar #1
+                  </div>
+                  <h3 className="text-3xl font-bold text-foreground mb-4">
+                    24/7 AI Voice Receptionist
+                  </h3>
+                  <p className="text-lg text-muted-foreground mb-6">
+                    Picks up in 2 seconds. Knows detailing. Books jobs while you're waxing. Never misses a G-Wagon again.
+                  </p>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Trained on auto detailing terminology</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Captures: name, phone, car, service, preferred date</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Full transcript + recording for every call</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Shares your calendar/booking link automatically</span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="bg-background/50 backdrop-blur-sm rounded-2xl p-6 border border-border">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 rounded-lg bg-success/20">
+                      <PhoneIncoming className="w-5 h-5 text-success" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">Live Call</p>
+                      <p className="text-sm text-muted-foreground">Customer calling about ceramic coating</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="bg-primary/10 p-3 rounded-lg border-l-4 border-primary">
+                      <p className="text-sm text-foreground">"Hi! Thanks for calling. How can I help you today?"</p>
+                    </div>
+                    <div className="bg-secondary p-3 rounded-lg border-l-4 border-muted-foreground">
+                      <p className="text-sm text-foreground">"Do you guys do ceramic coating on a Tesla?"</p>
+                    </div>
+                    <div className="bg-primary/10 p-3 rounded-lg border-l-4 border-primary">
+                      <p className="text-sm text-foreground">"Absolutely! Ceramic coating is one of our specialties. What year Tesla?"</p>
+                    </div>
+                  </div>
+                  <div className="mt-4 p-3 rounded-lg bg-success/10 border border-success/30">
+                    <p className="text-sm font-semibold text-success flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4" />
+                      Lead captured • Logged to dashboard
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+
+          {/* Pillar 2: AI Dashboard */}
+          <motion.div
+            className="mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
+            <Card className="p-8 lg:p-12 bg-gradient-to-br from-accent/10 via-card to-card border-2 border-accent/30">
+              <div className="grid lg:grid-cols-2 gap-12 items-center">
+                <div className="order-2 lg:order-1">
+                  <div className="bg-background/50 backdrop-blur-sm rounded-2xl p-6 border border-border">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 rounded-lg bg-primary/20">
+                        <BarChart3 className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-foreground">AI Co-Pilot Dashboard</p>
+                        <p className="text-sm text-muted-foreground">Ask anything about your leads</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3 mb-4">
+                      <div className="bg-secondary p-3 rounded-lg">
+                        <p className="text-sm text-foreground font-medium mb-2">"Who's my hottest lead today?"</p>
+                        <div className="bg-background p-2 rounded text-xs text-muted-foreground">
+                          <p className="font-semibold text-accent mb-1">🔥 Mike Thompson - Porsche 911</p>
+                          <p>Wants full detail + ceramic coating ($680). Called 3 times. High urgency.</p>
+                        </div>
+                      </div>
+                      <div className="bg-secondary p-3 rounded-lg">
+                        <p className="text-sm text-foreground font-medium mb-2">"Show me G-Wagons this week"</p>
+                        <div className="bg-background p-2 rounded text-xs text-muted-foreground">
+                          <p>2 G-Wagons: Sarah K. (ceramic + PPF), David R. (interior detail). Total value: $1,450</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="bg-success/10 p-2 rounded text-center">
+                        <p className="text-lg font-bold text-success">12</p>
+                        <p className="text-xs text-muted-foreground">Hot Leads</p>
+                      </div>
+                      <div className="bg-primary/10 p-2 rounded text-center">
+                        <p className="text-lg font-bold text-primary">5</p>
+                        <p className="text-xs text-muted-foreground">Booked</p>
+                      </div>
+                      <div className="bg-accent/10 p-2 rounded text-center">
+                        <p className="text-lg font-bold text-accent">$2.1k</p>
+                        <p className="text-xs text-muted-foreground">Pipeline</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="order-1 lg:order-2">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/20 text-accent text-sm font-semibold mb-4">
+                    <Sparkles className="w-4 h-4" />
+                    Pillar #2
+                  </div>
+                  <h3 className="text-3xl font-bold text-foreground mb-4">
+                    AI Dashboard "Co-Pilot"
+                  </h3>
+                  <p className="text-lg text-muted-foreground mb-6">
+                    Chat with your leads like ChatGPT. "Who's my hottest lead?" "Show me all G-Wagons this week." AI knows everything.
+                  </p>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Ask questions in plain English</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">See intent score: high/medium/low urgency</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Filter by car type, service, or booking status</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Full call history + transcripts for each lead</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+
+          {/* Pillar 3: SMS Closer */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            <Card className="p-8 lg:p-12 bg-gradient-to-br from-success/10 via-card to-card border-2 border-success/30">
+              <div className="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-success/20 text-success text-sm font-semibold mb-4">
+                    <MessageSquare className="w-4 h-4" />
+                    Pillar #3
+                  </div>
+                  <h3 className="text-3xl font-bold text-foreground mb-4">
+                    Native SMS "Closer"
+                  </h3>
+                  <p className="text-lg text-muted-foreground mb-6">
+                    1-tap to text leads. AI writes the message. Opens your phone's native SMS. <span className="font-semibold text-foreground">Bypasses A2P spam filters</span> = 10x better delivery.
+                  </p>
+                  <ul className="space-y-3 mb-6">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">AI drafts personalized SMS for each lead</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Uses YOUR phone number (not a spam shortcode)</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Customer replies go to your phone - real conversation</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">No Twilio fees, no carrier blocking</span>
+                    </li>
+                  </ul>
+                  <div className="p-4 rounded-xl bg-accent/10 border border-accent/30">
+                    <p className="text-sm font-semibold text-foreground mb-2">🎯 Why This Matters</p>
+                    <p className="text-sm text-muted-foreground">
+                      Regular SMS services get flagged as spam (10-30% delivery). <span className="font-semibold text-foreground">Native SMS from your personal number = 90%+ delivery</span>. Your texts actually get read.
+                    </p>
+                  </div>
+                </div>
+                <div className="bg-background/50 backdrop-blur-sm rounded-2xl p-6 border border-border">
+                  <div className="bg-card p-4 rounded-xl border border-border mb-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-sm font-semibold text-foreground">Mike Thompson</p>
+                      <Badge variant="high" className="text-xs">High Intent</Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Wants: Ceramic coating • Car: Tesla Model 3 • Called 2 hours ago
+                    </p>
+                    <Button variant="success" className="w-full mb-2">
+                      <MessageSquare className="w-4 h-4 mr-2" />
+                      Send Follow-Up Text
+                    </Button>
+                  </div>
+
+                  <div className="bg-primary/5 p-4 rounded-xl border border-primary/20">
+                    <p className="text-xs font-semibold text-primary mb-2">✨ AI DRAFTED MESSAGE:</p>
+                    <div className="bg-background p-3 rounded-lg mb-3">
+                      <p className="text-sm text-foreground">
+                        "Hey Mike! Thanks for calling about ceramic coating for your Tesla. I have Saturday 2pm or Monday 10am available. Which works better for you? Full detail + coating is $680 and takes about 6 hours. Let me know! 🚗"
+                      </p>
+                    </div>
+                    <p className="text-xs text-muted-foreground flex items-center gap-2">
+                      <Zap className="w-3 h-3" />
+                      Tap to send from YOUR phone number (bypasses spam filters)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+
+          {/* Why This Combination is Unbeatable */}
+          <motion.div
+            className="mt-16 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+          >
+            <Card className="p-8 bg-gradient-to-r from-primary/10 via-accent/10 to-success/10 border-2 border-primary/30">
+              <h3 className="text-2xl font-bold text-foreground mb-4">
+                This Is Why Competitors Can't Copy You
+              </h3>
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-6">
+                Most "AI receptionists" just answer the phone and dump data in a table. You get <span className="font-semibold text-foreground">voice + AI chat insights + native SMS delivery</span> that actually closes leads. They'd need to build 3 products. You get it in one.
+              </p>
+              <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div className="p-4 rounded-xl bg-background/50">
+                  <Phone className="w-8 h-8 text-primary mx-auto mb-2" />
+                  <p className="font-semibold text-foreground mb-1">Catch Every Call</p>
+                  <p className="text-sm text-muted-foreground">Never miss a detail</p>
+                </div>
+                <div className="p-4 rounded-xl bg-background/50">
+                  <Sparkles className="w-8 h-8 text-accent mx-auto mb-2" />
+                  <p className="font-semibold text-foreground mb-1">Know Who to Prioritize</p>
+                  <p className="text-sm text-muted-foreground">AI shows hottest leads</p>
+                </div>
+                <div className="p-4 rounded-xl bg-background/50">
+                  <MessageSquare className="w-8 h-8 text-success mx-auto mb-2" />
+                  <p className="font-semibold text-foreground mb-1">Close with SMS</p>
+                  <p className="text-sm text-muted-foreground">90%+ delivery rate</p>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section id="features" className="py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
