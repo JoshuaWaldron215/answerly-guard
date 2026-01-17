@@ -64,7 +64,7 @@ Expected output: `Success. No rows returned`
 
 **Link**: [Supabase Edge Function Settings](https://supabase.com/dashboard/project/gyqezbnqkkgskmhsnzgw/settings/functions)
 
-Scroll to **Secrets** section and add these **4 secrets**:
+Scroll to **Secrets** section and add these **6 secrets**:
 
 | Secret Name | Secret Value |
 |------------|--------------|
@@ -72,10 +72,14 @@ Scroll to **Secrets** section and add these **4 secrets**:
 | `GOOGLE_CLIENT_SECRET` | `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` |
 | `GOOGLE_REDIRECT_URI` | `https://gyqezbnqkkgskmhsnzgw.supabase.co/functions/v1/google-calendar-oauth` |
 | `FRONTEND_URL` | `https://detailpulse.io` |
+| `SUPABASE_URL` | `https://gyqezbnqkkgskmhsnzgw.supabase.co` |
+| `SUPABASE_SERVICE_ROLE_KEY` | Get from [Project Settings → API](https://supabase.com/dashboard/project/gyqezbnqkkgskmhsnzgw/settings/api) - click "Reveal" under "service_role secret" |
 
 Click **Save** after adding each secret.
 
-**Why?** Edge Function needs these to authenticate with Google and redirect back to your domain.
+**To get service_role key**: Go to Project Settings → API, scroll to "Project API keys", find `service_role`, click "Reveal", and copy the entire key.
+
+**Why?** Edge Function needs these to authenticate with Google, access the database, and redirect back to your domain.
 
 ---
 
@@ -143,12 +147,14 @@ https://detailpulse.io/settings
 http://localhost:5173/settings
 ```
 
-**Supabase Edge Function Secrets** (4 secrets):
+**Supabase Edge Function Secrets** (6 secrets):
 ```
 GOOGLE_CLIENT_ID=810153537787-ndchbqqmfhmlcb7eiaqlemv4lqp8rpjc.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=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
 GOOGLE_REDIRECT_URI=https://gyqezbnqkkgskmhsnzgw.supabase.co/functions/v1/google-calendar-oauth
 FRONTEND_URL=https://detailpulse.io
+SUPABASE_URL=https://gyqezbnqkkgskmhsnzgw.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=<get from Supabase Project Settings → API>
 ```
 
 **Vercel Environment Variables** (5 variables):
@@ -174,7 +180,13 @@ VITE_GOOGLE_REDIRECT_URI=https://gyqezbnqkkgskmhsnzgw.supabase.co/functions/v1/g
 
 **Problem**: Edge Function secrets not set
 
-**Fix**: Go to Supabase Dashboard → Settings → Edge Functions → Secrets and verify all 4 secrets are set
+**Fix**: Go to Supabase Dashboard → Settings → Edge Functions → Secrets and verify all 6 secrets are set
+
+### "Missing authorization header" (401) error
+
+**Problem**: Edge Function can't access database to store tokens
+
+**Fix**: Make sure you added `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to Edge Function secrets. See `FIX_OAUTH_401.md` for detailed instructions.
 
 ### Calendar events not showing
 
