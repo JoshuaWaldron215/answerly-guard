@@ -23,7 +23,8 @@ const steps = [
   { id: 2, title: "Business Hours", icon: Clock },
   { id: 3, title: "Services & Area", icon: Wrench },
   { id: 4, title: "Booking Link", icon: LinkIcon },
-  { id: 5, title: "Review & Test", icon: CheckCircle2 },
+  { id: 5, title: "Voice AI Setup", icon: Phone },
+  { id: 6, title: "Review & Test", icon: CheckCircle2 },
 ];
 
 const services = [
@@ -51,7 +52,7 @@ export default function Onboarding() {
   });
   const [testSent, setTestSent] = useState(false);
 
-  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 5));
+  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 6));
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
   const handleComplete = () => {
@@ -357,7 +358,78 @@ export default function Onboarding() {
             )}
 
             {currentStep === 5 && (
-              <StepContent key="step5" title="You're all set!">
+              <StepContent key="step5" title="Set up your AI Voice Receptionist">
+                <div className="space-y-6">
+                  <Card variant="glass" className="p-6">
+                    <div className="flex items-start gap-4 mb-4">
+                      <div className="p-3 rounded-xl bg-primary/20 text-primary shrink-0">
+                        <Phone className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-1">Get Your AI Phone Number</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Your AI receptionist needs its own phone number to answer calls 24/7
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+
+                  <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/10 to-card border border-primary/20">
+                    <h4 className="font-medium text-foreground mb-4">Quick Setup (5 minutes)</h4>
+                    <ol className="space-y-4 text-sm">
+                      <li className="flex gap-3">
+                        <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground font-medium text-xs">1</span>
+                        <div>
+                          <p className="font-medium text-foreground">Sign up at Vapi.ai</p>
+                          <p className="text-muted-foreground">Create your account and add a payment method</p>
+                        </div>
+                      </li>
+                      <li className="flex gap-3">
+                        <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground font-medium text-xs">2</span>
+                        <div>
+                          <p className="font-medium text-foreground">Purchase a phone number</p>
+                          <p className="text-muted-foreground">$1-2/month - choose a local number for your area</p>
+                        </div>
+                      </li>
+                      <li className="flex gap-3">
+                        <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground font-medium text-xs">3</span>
+                        <div>
+                          <p className="font-medium text-foreground">Copy the full setup guide</p>
+                          <p className="text-muted-foreground">We'll provide a complete step-by-step guide in Settings</p>
+                        </div>
+                      </li>
+                    </ol>
+                  </div>
+
+                  <div className="p-5 rounded-xl bg-secondary/30 border border-border">
+                    <h4 className="font-medium text-foreground mb-2">💡 Pro Tip</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Forward your existing business number to your new AI number. This way, your AI
+                      catches calls when you can't answer - no missed leads!
+                    </p>
+                  </div>
+
+                  <Button
+                    variant="accent"
+                    className="w-full"
+                    onClick={() => window.open('https://vapi.ai', '_blank')}
+                  >
+                    <Phone className="w-4 h-4 mr-2" />
+                    Go to Vapi.ai Setup
+                  </Button>
+
+                  <button
+                    onClick={() => nextStep()}
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors w-full text-center"
+                  >
+                    I'll set this up later →
+                  </button>
+                </div>
+              </StepContent>
+            )}
+
+            {currentStep === 6 && (
+              <StepContent key="step6" title="You're all set!">
                 <div className="space-y-6">
                   <Card variant="premium" className="p-6">
                     <h4 className="font-medium text-foreground mb-4">Your auto-SMS preview</h4>
@@ -435,7 +507,7 @@ export default function Onboarding() {
             Back
           </Button>
           
-          {currentStep < 5 ? (
+          {currentStep < 6 ? (
             <Button variant="accent" onClick={nextStep}>
               Continue
               <ArrowRight className="w-4 h-4 ml-2" />

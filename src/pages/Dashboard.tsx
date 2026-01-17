@@ -32,6 +32,13 @@ export default function Dashboard() {
   const [plan, setPlan] = useState<"starter" | "pro">("pro");
   const { user } = useAuth();
 
+  // Fetch user data
+  const { data: userData, isLoading: userLoading } = useQuery({
+    queryKey: ['user-data', user?.id],
+    queryFn: () => db.getUser(user!.id),
+    enabled: !!user,
+  });
+
   // Fetch dashboard stats
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['dashboard-stats', user?.id],
@@ -138,7 +145,7 @@ export default function Dashboard() {
     };
   }) || [];
 
-  if (statsLoading || callsLoading) {
+  if (statsLoading || callsLoading || userLoading) {
     return (
       <AppLayout>
         <div className="flex items-center justify-center min-h-screen">
@@ -170,7 +177,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <h1 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
-                  Command Center
+                  {userData?.business_name ? `${userData.business_name}` : 'Dashboard'}
                 </h1>
                 <p className="text-sm text-muted-foreground font-mono">
                   <span className="text-success">●</span> System active • Last sync 2s ago
