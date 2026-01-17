@@ -21,11 +21,11 @@ Client Secret: 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
    # Supabase Edge Function (REQUIRED)
    https://gyqezbnqkkgskmhsnzgw.supabase.co/functions/v1/google-calendar-oauth
 
+   # Production domain
+   https://detailpulse.io/settings
+
    # Local development
    http://localhost:5173/settings
-
-   # After deploying to Vercel, add:
-   https://your-vercel-url.vercel.app/settings
    ```
 
 6. Click **Save**
@@ -183,16 +183,16 @@ Or via [Vercel Dashboard](https://vercel.com/):
 
 ### After Vercel Deployment
 
-1. **Get your Vercel URL** (e.g., `https://answerly-guard.vercel.app`)
+1. **Your domain**: `https://detailpulse.io`
 
-2. **Add to Google Cloud Console**:
+2. **Verify in Google Cloud Console**:
    - Go back to OAuth credentials
-   - Add new redirect URI: `https://your-vercel-url.vercel.app/settings`
-   - Save
+   - Confirm this redirect URI exists: `https://detailpulse.io/settings`
+   - Save if you haven't already
 
-3. **Update Supabase Edge Function secret**:
+3. **Update Supabase Edge Function secret for production**:
    ```bash
-   supabase secrets set FRONTEND_URL=https://your-vercel-url.vercel.app
+   supabase secrets set FRONTEND_URL=https://detailpulse.io
    ```
 
 ## Troubleshooting
