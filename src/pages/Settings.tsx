@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { connectGoogleCalendar, disconnectGoogleCalendar, isGoogleCalendarConnected } from "@/lib/googleCalendar";
 import {
   Building2,
   Clock,
@@ -23,7 +24,10 @@ import {
   Phone,
   Mic,
   Save,
-  Loader2
+  Loader2,
+  Calendar,
+  CheckCircle2,
+  XCircle
 } from "lucide-react";
 
 const settingsSections = [
@@ -97,6 +101,8 @@ export default function Settings() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [userData, setUserData] = useState<any>(null);
+  const [showCalendarSuccess, setShowCalendarSuccess] = useState(false);
 
   // Form state
   const [businessName, setBusinessName] = useState('');
@@ -115,6 +121,16 @@ export default function Settings() {
   // Load user settings on mount
   useEffect(() => {
     loadUserSettings();
+
+    // Check if redirected back from Google OAuth
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('calendar_connected') === 'true') {
+      setShowCalendarSuccess(true);
+      // Clear URL params
+      window.history.replaceState({}, '', '/settings');
+      // Hide success message after 5 seconds
+      setTimeout(() => setShowCalendarSuccess(false), 5000);
+    }
   }, [user]);
 
   const loadUserSettings = async () => {
@@ -131,6 +147,7 @@ export default function Settings() {
       if (error) throw error;
 
       if (data) {
+        setUserData(data);
         setBusinessName(data.business_name || '');
         setPhoneNumber(data.phone_number || '');
         setVapiPhoneNumber(data.vapi_phone_number || '');
@@ -171,6 +188,25 @@ export default function Settings() {
       alert('Failed to save settings. Please try again.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleConnectGoogleCalendar = () => {
+    if (!user) return;
+    connectGoogleCalendar(user.id);
+  };
+
+  const handleDisconnectGoogleCalendar = async () => {
+    if (!user) return;
+    if (!confirm('Are you sure you want to disconnect Google Calendar?')) return;
+
+    try {
+      await disconnectGoogleCalendar(user.id);
+      await loadUserSettings(); // Reload user data
+      alert('Google Calendar disconnected successfully');
+    } catch (error) {
+      console.error('Error disconnecting calendar:', error);
+      alert('Failed to disconnect Google Calendar');
     }
   };
 
@@ -359,6 +395,122 @@ export default function Settings() {
                 )}
               </Button>
             </div>
+          </Card>
+        </motion.div>
+
+        {/* Google Calendar Integration */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="mb-8"
+        >
+          <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Calendar className="w-5 h-5" />
+            Google Calendar Integration
+          </h2>
+
+          {showCalendarSuccess && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 p-4 rounded-xl bg-green-500/10 border border-green-500/20"
+            >
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="w-5 h-5 text-green-600" />
+                <p className="text-sm font-medium text-green-600">
+                  Google Calendar connected successfully!
+                </p>
+              </div>
+            </motion.div>
+          )}
+
+          <Card variant="premium" className="p-6">
+            {userData && isGoogleCalendarConnected(userData) ? (
+              <div className="space-y-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-4">
+                    <div className="p-2 rounded-xl bg-green-500/10 text-green-600">
+                      <CheckCircle2 className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground mb-1">Connected</h3>
+                      <p className="text-sm text-muted-foreground mb-1">
+                        Your Google Calendar is connected and syncing
+                      </p>
+                      {userData.google_calendar_email && (
+                        <p className="text-xs text-muted-foreground">
+                          Account: {userData.google_calendar_email}
+                        </p>
+                      )}
+                      {userData.google_calendar_connected_at && (
+                        <p className="text-xs text-muted-foreground">
+                          Connected: {new Date(userData.google_calendar_connected_at).toLocaleDateString()}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <Badge variant="success">Active</Badge>
+                </div>
+
+                <div className="p-4 rounded-xl bg-secondary/50">
+                  <h4 className="text-sm font-medium text-foreground mb-2">What's syncing:</h4>
+                  <ul className="text-sm text-muted-foreground space-y-1">
+                    <li>• Appointments booked by AI are added to your calendar</li>
+                    <li>• AI checks your availability in real-time during calls</li>
+                    <li>• Calendar events appear on your Calendar page</li>
+                  </ul>
+                </div>
+
+                <Button
+                  variant="outline"
+                  onClick={handleDisconnectGoogleCalendar}
+                  className="w-full sm:w-auto"
+                >
+                  <XCircle className="w-4 h-4 mr-2" />
+                  Disconnect Google Calendar
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex items-start gap-4">
+                  <div className="p-2 rounded-xl bg-secondary text-muted-foreground">
+                    <Calendar className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-foreground mb-2">
+                      Connect Your Google Calendar
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Allow DetailPilotAI to sync appointments with your Google Calendar. Your AI receptionist will be able to check your real-time availability and book appointments directly.
+                    </p>
+
+                    <div className="p-4 rounded-xl bg-secondary/50 mb-4">
+                      <h4 className="text-sm font-medium text-foreground mb-2">Benefits:</h4>
+                      <ul className="text-sm text-muted-foreground space-y-1">
+                        <li>✓ AI checks your real availability during calls</li>
+                        <li>✓ Automatic appointment booking to your calendar</li>
+                        <li>✓ Two-way sync: updates flow both directions</li>
+                        <li>✓ View all bookings in one place</li>
+                      </ul>
+                    </div>
+
+                    <Button
+                      variant="accent"
+                      onClick={handleConnectGoogleCalendar}
+                      className="w-full sm:w-auto"
+                    >
+                      <Calendar className="w-4 h-4 mr-2" />
+                      Connect Google Calendar
+                    </Button>
+
+                    <p className="text-xs text-muted-foreground mt-3">
+                      Optional: You can use DetailPilotAI without connecting Google Calendar. Appointments will still be tracked internally.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </Card>
         </motion.div>
 

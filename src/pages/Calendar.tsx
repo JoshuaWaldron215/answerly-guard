@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import AppLayout from "@/components/AppLayout";
 import { Card } from "@/components/ui/card";
@@ -6,7 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
-import { db, type Call } from "@/lib/supabase";
+import { db, type Call, supabase } from "@/lib/supabase";
+import {
+  isGoogleCalendarConnected,
+  fetchGoogleCalendarEvents,
+  getValidAccessToken,
+  type GoogleCalendarEvent
+} from "@/lib/googleCalendar";
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
@@ -37,7 +43,9 @@ interface CalendarEvent {
   vehicle?: string;
   status: 'booked' | 'waiting' | 'completed';
   notes?: string;
-  callData: Call;
+  source: 'internal' | 'google';
+  callData?: Call;
+  googleEvent?: GoogleCalendarEvent;
 }
 
 export default function Calendar() {
@@ -45,6 +53,15 @@ export default function Calendar() {
   const [viewMode, setViewMode] = useState<ViewMode>('month');
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+  const [googleEvents, setGoogleEvents] = useState<GoogleCalendarEvent[]>([]);
+  const [loadingGoogle, setLoadingGoogle] = useState(false);
+
+  // Fetch user data to check Google Calendar connection
+  const { data: userData } = useQuery({
+    queryKey: ['user-data', user?.id],
+    queryFn: () => db.getUser(user!.id),
+    enabled: !!user,
+  });
 
   // Fetch booked calls from database
   const { data: calls, isLoading } = useQuery({
@@ -54,8 +71,39 @@ export default function Calendar() {
     refetchInterval: 30000,
   });
 
+  // Fetch Google Calendar events if connected
+  useEffect(() => {
+    if (userData && isGoogleCalendarConnected(userData)) {
+      fetchGoogleEvents();
+    }
+  }, [userData]);
+
+  const fetchGoogleEvents = async () => {
+    if (!userData || !user) return;
+
+    try {
+      setLoadingGoogle(true);
+
+      // Get valid access token (refreshes if needed)
+      const accessToken = await getValidAccessToken(
+        user.id,
+        userData.google_calendar_token!,
+        userData.google_calendar_token_expires_at!,
+        userData.google_calendar_refresh_token!
+      );
+
+      // Fetch events for next 30 days
+      const events = await fetchGoogleCalendarEvents(accessToken);
+      setGoogleEvents(events);
+    } catch (error) {
+      console.error('Error fetching Google Calendar events:', error);
+    } finally {
+      setLoadingGoogle(false);
+    }
+  };
+
   // Transform calls to calendar events
-  const events: CalendarEvent[] = calls?.map(call => ({
+  const internalEvents: CalendarEvent[] = calls?.map(call => ({
     id: call.id,
     title: call.service_requested || 'Detail Appointment',
     date: new Date(call.preferred_date || call.created_at),
@@ -68,8 +116,30 @@ export default function Calendar() {
       .join(' ') || undefined,
     status: 'booked',
     notes: call.notes || undefined,
+    source: 'internal' as const,
     callData: call
   })) || [];
+
+  // Transform Google Calendar events
+  const transformedGoogleEvents: CalendarEvent[] = googleEvents.map(gEvent => ({
+    id: gEvent.id,
+    title: gEvent.summary,
+    date: new Date(gEvent.start.dateTime),
+    time: new Date(gEvent.start.dateTime).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    }),
+    customer: gEvent.attendees?.[0]?.displayName || gEvent.attendees?.[0]?.email || 'N/A',
+    phone: 'N/A',
+    service: gEvent.description || 'Calendar Event',
+    status: 'booked',
+    notes: gEvent.description,
+    source: 'google' as const,
+    googleEvent: gEvent
+  }));
+
+  // Combine all events
+  const events: CalendarEvent[] = [...internalEvents, ...transformedGoogleEvents];
 
   // Calendar navigation
   const goToPreviousMonth = () => {
@@ -502,6 +572,8 @@ function EventDetailModal({ event, onClose }: {
   event: CalendarEvent;
   onClose: () => void;
 }) {
+  const isGoogleEvent = event.source === 'google';
+
   return (
     <>
       <motion.div
@@ -519,10 +591,15 @@ function EventDetailModal({ event, onClose }: {
       >
         <Card variant="premium" className="p-6">
           <div className="flex items-start justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-bold text-foreground mb-1">
-                {event.service}
-              </h2>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <h2 className="text-2xl font-bold text-foreground">
+                  {event.title}
+                </h2>
+                <Badge variant={isGoogleEvent ? 'default' : 'success'}>
+                  {isGoogleEvent ? 'Google Calendar' : 'DetailPilot'}
+                </Badge>
+              </div>
               <p className="text-muted-foreground">
                 {event.date.toLocaleDateString('en-US', {
                   weekday: 'long',
@@ -539,20 +616,36 @@ function EventDetailModal({ event, onClose }: {
           </div>
 
           <div className="space-y-4">
-            <div className="p-4 rounded-xl bg-secondary/50">
-              <p className="text-sm text-muted-foreground mb-1">Customer</p>
-              <p className="font-medium text-foreground">{event.customer}</p>
-            </div>
+            {!isGoogleEvent && (
+              <>
+                <div className="p-4 rounded-xl bg-secondary/50">
+                  <p className="text-sm text-muted-foreground mb-1">Customer</p>
+                  <p className="font-medium text-foreground">{event.customer}</p>
+                </div>
 
-            <div className="p-4 rounded-xl bg-secondary/50">
-              <p className="text-sm text-muted-foreground mb-1">Phone</p>
-              <p className="font-medium text-foreground">{event.phone}</p>
-            </div>
+                <div className="p-4 rounded-xl bg-secondary/50">
+                  <p className="text-sm text-muted-foreground mb-1">Phone</p>
+                  <p className="font-medium text-foreground">{event.phone}</p>
+                </div>
 
-            {event.vehicle && (
+                {event.vehicle && (
+                  <div className="p-4 rounded-xl bg-secondary/50">
+                    <p className="text-sm text-muted-foreground mb-1">Vehicle</p>
+                    <p className="font-medium text-foreground">{event.vehicle}</p>
+                  </div>
+                )}
+
+                <div className="p-4 rounded-xl bg-secondary/50">
+                  <p className="text-sm text-muted-foreground mb-1">Service</p>
+                  <p className="font-medium text-foreground">{event.service}</p>
+                </div>
+              </>
+            )}
+
+            {isGoogleEvent && (
               <div className="p-4 rounded-xl bg-secondary/50">
-                <p className="text-sm text-muted-foreground mb-1">Vehicle</p>
-                <p className="font-medium text-foreground">{event.vehicle}</p>
+                <p className="text-sm text-muted-foreground mb-1">Description</p>
+                <p className="font-medium text-foreground">{event.service || 'No description'}</p>
               </div>
             )}
 
@@ -564,24 +657,26 @@ function EventDetailModal({ event, onClose }: {
             )}
           </div>
 
-          <div className="flex gap-3 mt-6">
-            <Button
-              variant="accent"
-              className="flex-1"
-              onClick={() => window.open(`tel:${event.phone}`, '_self')}
-            >
-              <Phone className="w-4 h-4 mr-2" />
-              Call Customer
-            </Button>
-            <Button
-              variant="secondary"
-              className="flex-1"
-              onClick={() => window.open(`sms:${event.phone}`, '_self')}
-            >
-              <MessageSquare className="w-4 h-4 mr-2" />
-              Send Text
-            </Button>
-          </div>
+          {!isGoogleEvent && event.phone !== 'N/A' && (
+            <div className="flex gap-3 mt-6">
+              <Button
+                variant="accent"
+                className="flex-1"
+                onClick={() => window.open(`tel:${event.phone}`, '_self')}
+              >
+                <Phone className="w-4 h-4 mr-2" />
+                Call Customer
+              </Button>
+              <Button
+                variant="secondary"
+                className="flex-1"
+                onClick={() => window.open(`sms:${event.phone}`, '_self')}
+              >
+                <MessageSquare className="w-4 h-4 mr-2" />
+                Send Text
+              </Button>
+            </div>
+          )}
         </Card>
       </motion.div>
     </>

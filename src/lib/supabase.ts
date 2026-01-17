@@ -33,6 +33,11 @@ export type User = {
   forward_after_rings: number;
   subscription_status: string;
   trial_ends_at: string;
+  google_calendar_token: string | null;
+  google_calendar_refresh_token: string | null;
+  google_calendar_token_expires_at: string | null;
+  google_calendar_connected_at: string | null;
+  google_calendar_email: string | null;
   created_at: string;
   updated_at: string;
 };
