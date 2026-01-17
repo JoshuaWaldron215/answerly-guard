@@ -259,32 +259,6 @@ export default function Calendar() {
           />
         )}
 
-        {/* Google Calendar Integration Callout */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-8"
-        >
-          <Card variant="premium" className="p-6 bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20">
-            <div className="flex items-start gap-4">
-              <div className="p-3 rounded-xl bg-primary/10 text-primary shrink-0">
-                <Sparkles className="w-6 h-6" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-foreground mb-2">Coming Soon: Google Calendar Integration</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Connect your Google Calendar for automatic 2-way sync. AI will check your real availability
-                  and book appointments directly to your calendar. For now, manually add these appointments to your calendar.
-                </p>
-                <Button variant="outline" size="sm" disabled>
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  Connect Google Calendar (Coming Soon)
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </motion.div>
-
         {/* Event Detail Modal */}
         {selectedEvent && (
           <EventDetailModal
