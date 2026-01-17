@@ -33,13 +33,15 @@ export default function Signup() {
     try {
       await signUp(email, password, businessName);
       setSuccess(true);
-
-      // Redirect to onboarding after successful signup
-      setTimeout(() => {
-        navigate('/onboarding');
-      }, 2000);
+      // Don't redirect - wait for email verification
     } catch (err: any) {
-      setError(err.message || 'Failed to create account');
+      console.error('Signup error:', err);
+      const errorMessage = err.message || 'Failed to create account';
+      if (errorMessage.includes('already registered')) {
+        setError('This email is already registered. Try signing in instead.');
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -58,7 +60,11 @@ export default function Signup() {
           {success ? (
             <Alert className="bg-green-50 border-green-200">
               <AlertDescription className="text-green-800">
-                Account created successfully! Redirecting to onboarding...
+                <div className="space-y-2">
+                  <p className="font-semibold">✅ Account created successfully!</p>
+                  <p>Check your email <strong>({email})</strong> for a verification link.</p>
+                  <p className="text-sm">Click the link to verify your email and start using DetailPilotAI.</p>
+                </div>
               </AlertDescription>
             </Alert>
           ) : (

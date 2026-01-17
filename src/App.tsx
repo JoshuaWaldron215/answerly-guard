@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -11,7 +11,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Calls from "./pages/Calls";
-import Bookings from "./pages/Bookings";
+import Calendar from "./pages/Calendar";
 import Settings from "./pages/Settings";
 import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
@@ -55,13 +55,15 @@ const App = () => (
                 }
               />
               <Route
-                path="/bookings"
+                path="/calendar"
                 element={
                   <ProtectedRoute>
-                    <Bookings />
+                    <Calendar />
                   </ProtectedRoute>
                 }
               />
+              {/* Redirect old bookings route to calendar */}
+              <Route path="/bookings" element={<Navigate to="/calendar" replace />} />
               <Route
                 path="/settings"
                 element={

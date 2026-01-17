@@ -1,17 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Phone, 
-  MessageSquare, 
-  Calendar, 
-  BarChart3, 
-  Clock, 
-  Shield, 
-  Zap, 
+import VoiceDemo from "@/components/VoiceDemo";
+import {
+  Phone,
+  MessageSquare,
+  Calendar,
+  BarChart3,
+  Clock,
+  Shield,
+  Zap,
   CheckCircle2,
   ArrowRight,
   Star,
@@ -31,6 +32,26 @@ import {
   Award,
   ChevronDown
 } from "lucide-react";
+
+// Custom Logo Component
+const Logo = ({ size = "md" }: { size?: "sm" | "md" }) => {
+  const dimensions = size === "sm" ? { w: 32, h: 32 } : { w: 36, h: 36 };
+
+  return (
+    <svg width={dimensions.w} height={dimensions.h} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="40" height="40" rx="8" fill="url(#gradient)" />
+      <path d="M12 28V15C12 13.8954 12.8954 13 14 13H26C27.1046 13 28 13.8954 28 15V18" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+      <circle cx="24" cy="24" r="5" fill="white" fillOpacity="0.2"/>
+      <path d="M26.5 22L24 24.5L21.5 22" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <defs>
+        <linearGradient id="gradient" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#0099CC"/>
+          <stop offset="1" stopColor="#0077AA"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+};
 // Dashboard preview - will use placeholder until image is added
 const dashboardPreview = "/placeholder.svg";
 
@@ -54,17 +75,26 @@ export default function LandingPage() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.95]);
 
+  // Force light mode on landing page
+  useEffect(() => {
+    const html = document.documentElement;
+    const originalClass = html.className;
+    html.classList.remove('dark');
+
+    return () => {
+      html.className = originalClass;
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass glass-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-orange-500 flex items-center justify-center shadow-lg">
-                <Phone className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-xl font-bold text-foreground">Answerly</span>
+            <div className="flex items-center gap-2.5">
+              <Logo />
+              <span className="text-xl font-bold text-foreground">DetailPilot<span className="text-primary">AI</span></span>
             </div>
             <div className="hidden md:flex items-center gap-8">
               <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How It Works</a>
@@ -73,7 +103,9 @@ export default function LandingPage() {
               <a href="#faq" className="text-sm text-muted-foreground hover:text-foreground transition-colors">FAQ</a>
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" className="hidden sm:flex">Log In</Button>
+              <Link to="/login">
+                <Button variant="ghost" size="sm" className="hidden sm:flex">Log In</Button>
+              </Link>
               <Link to="/signup">
                 <Button variant="accent" size="sm">
                   Start Free
@@ -86,370 +118,582 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-28 pb-8 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Animated background gradients */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-1/4 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
-          <div className="absolute top-40 right-1/4 w-[400px] h-[400px] bg-accent/15 rounded-full blur-[100px] animate-pulse animation-delay-500" />
-        </div>
-        
-        <motion.div 
-          className="max-w-7xl mx-auto relative"
-          style={{ opacity: heroOpacity, scale: heroScale }}
-        >
-          <motion.div 
-            className="text-center max-w-4xl mx-auto"
-            initial="initial"
-            animate="animate"
-            variants={staggerContainer}
-          >
-            {/* Social proof badge */}
-            <motion.div variants={fadeInUp} className="flex justify-center mb-6">
-              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-card border border-border">
-                <div className="flex -space-x-2">
-                  {[1,2,3,4].map((i) => (
-                    <div key={i} className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-background flex items-center justify-center">
-                      <span className="text-[10px] font-medium text-foreground">{['MJ', 'DR', 'SK', 'TC'][i-1]}</span>
-                    </div>
-                  ))}
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  <span className="text-foreground font-semibold">500+</span> detailers recovering missed calls
-                </span>
-              </div>
-            </motion.div>
-            
-            <motion.h1 
-              className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-foreground leading-[1.1] mb-6 tracking-tight"
-              variants={fadeInUp}
-            >
-              Stop Losing{" "}
-              <span className="relative inline-block">
-                <span className="text-gradient-primary">$2,400/month</span>
-                <motion.div 
-                  className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-primary to-accent rounded-full"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ delay: 0.8, duration: 0.6 }}
-                />
-              </span>
-              <br />
-              <span className="text-muted-foreground font-medium text-3xl sm:text-4xl lg:text-5xl">to Missed Calls</span>
-            </motion.h1>
-            
-            <motion.p 
-              className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-8"
-              variants={fadeInUp}
-            >
-              Every missed call costs you <span className="text-foreground font-medium">$150-300</span>. 
-              Answerly texts back instantly, answers questions with AI, and books the job — 
-              <span className="text-foreground font-medium"> while you're under the hood</span>.
-            </motion.p>
-            
-            <motion.div 
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8"
-              variants={fadeInUp}
-            >
-              <Link to="/signup">
-                <Button variant="hero" size="xl" className="w-full sm:w-auto text-base group">
-                  Start 7-Day Free Trial
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-              <Button variant="outline" size="xl" className="w-full sm:w-auto text-base">
-                <Play className="w-4 h-4 mr-2" />
-                Watch 2-min Demo
-              </Button>
-            </motion.div>
-
-            {/* Trust badges */}
-            <motion.div 
-              className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground"
-              variants={fadeInUp}
-            >
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-success" />
-                No credit card required
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-success" />
-                Setup in 2 minutes
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-success" />
-                Cancel anytime
-              </div>
-            </motion.div>
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* Dashboard Preview - Full Width Showcase */}
-      <section className="relative px-4 sm:px-6 lg:px-8 pb-20">
-        <motion.div 
-          className="max-w-6xl mx-auto"
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <div className="relative">
-            {/* Glow behind dashboard */}
-            <div className="absolute -inset-4 bg-gradient-to-b from-primary/20 via-accent/10 to-transparent rounded-3xl blur-2xl" />
-            
-            {/* Browser chrome */}
-            <div className="relative bg-card border border-border rounded-2xl overflow-hidden shadow-2xl">
-              {/* Browser header */}
-              <div className="flex items-center gap-2 px-4 py-3 bg-secondary/50 border-b border-border">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-destructive/50" />
-                  <div className="w-3 h-3 rounded-full bg-warning/50" />
-                  <div className="w-3 h-3 rounded-full bg-success/50" />
-                </div>
-                <div className="flex-1 flex justify-center">
-                  <div className="px-4 py-1 rounded-lg bg-background/80 text-xs text-muted-foreground">
-                    app.answerly.io/dashboard
+      <section className="relative pt-32 pb-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left: Hero Content */}
+            <div className="text-center lg:text-left">
+              {/* Social proof badge */}
+              <div className="flex justify-center lg:justify-start mb-8">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-background">
+                  <div className="flex -space-x-1">
+                    {[1,2,3].map((i) => (
+                      <div key={i} className="w-6 h-6 rounded-full bg-primary/10 border-2 border-background" />
+                    ))}
                   </div>
+                  <span className="text-sm text-muted-foreground">
+                    <span className="font-semibold text-foreground">500+</span> detailing shops
+                  </span>
                 </div>
               </div>
-              
-              {/* Dashboard screenshot */}
-              <img 
-                src={dashboardPreview} 
-                alt="Answerly Command Center Dashboard" 
-                className="w-full"
-              />
-              
-              {/* Video placeholder overlay - for future video */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer bg-background/50 backdrop-blur-sm">
-                <div className="flex flex-col items-center gap-4">
-                  <div className="w-20 h-20 rounded-full bg-accent flex items-center justify-center shadow-lg shadow-accent/30">
-                    <Play className="w-8 h-8 text-white ml-1" />
+
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-foreground leading-[1.1] mb-6">
+                You're Waxing.
+                <br />
+                <span className="text-primary">We Book the Detail.</span>
+              </h1>
+
+              <p className="text-xl text-muted-foreground mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                AI receptionist that picks up your calls in 2 seconds, knows your services, and books jobs — while you're polishing.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-8">
+                <Link to="/signup">
+                  <Button size="xl" className="w-full sm:w-auto text-lg px-8 py-6 shadow-lg bg-primary hover:bg-primary/90">
+                    Start Free Trial
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+                <div className="flex items-center gap-2 text-sm">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-accent text-accent" />
+                    ))}
                   </div>
-                  <span className="text-foreground font-medium">Watch Demo Video</span>
+                  <span className="text-muted-foreground">4.9/5 from detailers</span>
                 </div>
+              </div>
+
+              <div className="flex flex-wrap justify-center lg:justify-start gap-4 text-sm text-muted-foreground">
+                <span>✓ No credit card</span>
+                <span>✓ 2-min setup</span>
+                <span>✓ Cancel anytime</span>
               </div>
             </div>
+
+            {/* Right: Voice Demo */}
+            <div className="hidden lg:block">
+              <Card className="border-2 border-primary/20 p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <Phone className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Try the AI</h3>
+                    <p className="text-sm text-muted-foreground">Talk to our receptionist</p>
+                  </div>
+                </div>
+                <VoiceDemo compact />
+              </Card>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* Stats Bar */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 border-y border-border bg-card/50">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-secondary/30">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <StatItem value="71%" label="Average recovery rate" icon={<TrendingUp className="w-5 h-5" />} />
-            <StatItem value="< 5s" label="Response time" icon={<Timer className="w-5 h-5" />} />
-            <StatItem value="$540" label="Avg revenue recovered/week" icon={<DollarSign className="w-5 h-5" />} />
-            <StatItem value="24/7" label="Always-on coverage" icon={<Clock className="w-5 h-5" />} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+              <div className="text-4xl font-bold text-foreground mb-1">71%</div>
+              <div className="text-sm text-muted-foreground">Leads captured</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-foreground mb-1">2 sec</div>
+              <div className="text-sm text-muted-foreground">AI answers in</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-foreground mb-1">$680</div>
+              <div className="text-sm text-muted-foreground">Avg/week recovered</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-foreground mb-1">24/7</div>
+              <div className="text-sm text-muted-foreground">Never miss a call</div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Problem Section */}
       <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <motion.div 
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <Badge variant="outline" className="mb-4 px-4 py-1.5">
-              <PhoneOff className="w-3 h-3 mr-1.5" />
-              The Problem
-            </Badge>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-              Right Now, You're Losing Jobs
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Every time your phone rings while you're detailing, you face an impossible choice.
-            </p>
-          </motion.div>
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-6">
+            The Detail Shop Dilemma
+          </h2>
+          <p className="text-xl text-muted-foreground mb-12">
+            You're 3 hours into a paint correction. Phone rings. Do you strip off gloves and risk contamination, or let a $250 ceramic coating walk?
+          </p>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            <ProblemCard
-              icon={<PhoneOff className="w-6 h-6" />}
-              stat="5-8"
-              label="Missed calls per week"
-              description="You can't answer while you're waxing a hood or cleaning an interior."
-              delay={0}
-            />
-            <ProblemCard
-              icon={<DollarSign className="w-6 h-6" />}
-              stat="$150-300"
-              label="Lost per missed call"
-              description="That's a detail job walking to your competitor down the street."
-              delay={0.1}
-            />
-            <ProblemCard
-              icon={<Users className="w-6 h-6" />}
-              stat="80%"
-              label="Won't leave a voicemail"
-              description="They'll just call the next detailer on Google instead."
-              delay={0.2}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section id="how-it-works" className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-card/50 to-transparent">
-        <div className="max-w-6xl mx-auto">
-          <motion.div 
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <Badge variant="outline" className="mb-4 px-4 py-1.5">
-              <Sparkles className="w-3 h-3 mr-1.5" />
-              How It Works
-            </Badge>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-              Never Miss Another Job
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Answerly works in the background while you focus on what you do best.
-            </p>
-          </motion.div>
-
-          <div className="relative">
-            {/* Connection line */}
-            <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-border to-transparent -translate-y-1/2" />
-            
-            <div className="grid md:grid-cols-4 gap-8">
-              <StepCard
-                number="1"
-                icon={<PhoneIncoming className="w-6 h-6" />}
-                title="Call Comes In"
-                description="You're busy detailing. The call goes to voicemail."
-                delay={0}
-              />
-              <StepCard
-                number="2"
-                icon={<MessageSquare className="w-6 h-6" />}
-                title="Instant Text"
-                description="Within 5 seconds, they get your custom message."
-                delay={0.1}
-                highlighted
-              />
-              <StepCard
-                number="3"
-                icon={<Bot className="w-6 h-6" />}
-                title="AI Answers"
-                description="Questions about pricing? Hours? AI handles it."
-                delay={0.2}
-                badge="Pro"
-              />
-              <StepCard
-                number="4"
-                icon={<Calendar className="w-6 h-6" />}
-                title="Job Booked"
-                description="They book directly. You see it in your dashboard."
-                delay={0.3}
-              />
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="text-5xl font-bold text-destructive mb-2">5-8</div>
+              <div className="font-semibold text-foreground mb-2">Missed calls/week</div>
+              <p className="text-sm text-muted-foreground">Can't answer during a 6-hour detail job</p>
+            </div>
+            <div className="text-center">
+              <div className="text-5xl font-bold text-destructive mb-2">$150-300</div>
+              <div className="font-semibold text-foreground mb-2">Per missed detail</div>
+              <p className="text-sm text-muted-foreground">That's a full interior walking to your competitor</p>
+            </div>
+            <div className="text-center">
+              <div className="text-5xl font-bold text-destructive mb-2">80%</div>
+              <div className="font-semibold text-foreground mb-2">Won't leave voicemail</div>
+              <p className="text-sm text-muted-foreground">They Google and call the next shop in 30 seconds</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-24 px-4 sm:px-6 lg:px-8">
+      {/* How It Works */}
+      <section id="how-it-works" className="py-24 px-4 sm:px-6 lg:px-8 bg-secondary/30">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-4">
+            Keep Detailing. We'll Handle the Phone.
+          </h2>
+          <p className="text-lg text-muted-foreground mb-16 max-w-2xl mx-auto">
+            Our AI understands detailing. Knows your services. Books the jobs.
+          </p>
+
+          <div className="grid md:grid-cols-4 gap-8">
+            <div>
+              <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mb-4 mx-auto">1</div>
+              <h3 className="font-semibold text-foreground mb-2">Customer Calls</h3>
+              <p className="text-sm text-muted-foreground">Phone rings during paint correction</p>
+            </div>
+            <div>
+              <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mb-4 mx-auto">2</div>
+              <h3 className="font-semibold text-foreground mb-2">AI Answers</h3>
+              <p className="text-sm text-muted-foreground">Picks up in 2 sec, knows your prices</p>
+            </div>
+            <div>
+              <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mb-4 mx-auto">3</div>
+              <h3 className="font-semibold text-foreground mb-2">Collects Info</h3>
+              <p className="text-sm text-muted-foreground">Name, car, service, preferred date</p>
+            </div>
+            <div>
+              <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mb-4 mx-auto">4</div>
+              <h3 className="font-semibold text-foreground mb-2">Lead in Dashboard</h3>
+              <p className="text-sm text-muted-foreground">Full details + recording waiting</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3 Pillars - Competitive Moat Section */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-primary/5 to-transparent">
         <div className="max-w-6xl mx-auto">
-          <motion.div 
+          <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <Badge variant="outline" className="mb-4 px-4 py-1.5">
-              <Target className="w-3 h-3 mr-1.5" />
-              Features
+            <Badge variant="accent" className="mb-4 px-4 py-1.5">
+              <Sparkles className="w-3 h-3 mr-1.5" />
+              The Complete System
             </Badge>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-              Everything You Need to Capture Every Lead
+              Not Just AI Answering.<br />
+              <span className="text-primary">A Complete Lead-Closing Machine.</span>
             </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Most "AI receptionists" just pick up the phone. We built 3 systems that work together to turn every call into cash.
+            </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <FeatureCard
-              icon={<Zap className="w-6 h-6" />}
-              title="Instant SMS Follow-up"
-              description="Custom text message sent within seconds of a missed call."
-              delay={0}
-            />
-            <FeatureCard
-              icon={<Calendar className="w-6 h-6" />}
-              title="Booking Link Included"
-              description="Your calendar link goes with every message. Easy self-booking."
-              delay={0.1}
-            />
-            <FeatureCard
-              icon={<Bot className="w-6 h-6" />}
-              title="AI FAQ Answering"
-              description="Handle pricing questions, hours, and service area automatically."
-              badge="Pro"
-              delay={0.2}
-            />
-            <FeatureCard
-              icon={<BarChart3 className="w-6 h-6" />}
-              title="Command Center"
-              description="See every lead, every conversation, every booking in one place."
-              delay={0.3}
-            />
-            <FeatureCard
-              icon={<Bell className="w-6 h-6" />}
-              title="Smart Notifications"
-              description="Know when high-intent leads need your attention."
-              delay={0.4}
-            />
-            <FeatureCard
-              icon={<Shield className="w-6 h-6" />}
-              title="Known Caller Filter"
-              description="Family and vendors? Never auto-texted. You're in control."
-              delay={0.5}
-            />
+          {/* Pillar 1: AI Voice */}
+          <motion.div
+            className="mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <Card className="p-8 lg:p-12 bg-gradient-to-br from-primary/10 via-card to-card border-2 border-primary/30">
+              <div className="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary text-sm font-semibold mb-4">
+                    <Phone className="w-4 h-4" />
+                    Pillar #1
+                  </div>
+                  <h3 className="text-3xl font-bold text-foreground mb-4">
+                    24/7 AI Voice Receptionist
+                  </h3>
+                  <p className="text-lg text-muted-foreground mb-6">
+                    Picks up in 2 seconds. Knows detailing. Books jobs while you're waxing. Never misses a G-Wagon again.
+                  </p>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Trained on auto detailing terminology</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Captures: name, phone, car, service, preferred date</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Full transcript + recording for every call</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Shares your calendar/booking link automatically</span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="bg-background/50 backdrop-blur-sm rounded-2xl p-6 border border-border">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 rounded-lg bg-success/20">
+                      <PhoneIncoming className="w-5 h-5 text-success" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">Live Call</p>
+                      <p className="text-sm text-muted-foreground">Customer calling about ceramic coating</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="bg-primary/10 p-3 rounded-lg border-l-4 border-primary">
+                      <p className="text-sm text-foreground">"Hi! Thanks for calling. How can I help you today?"</p>
+                    </div>
+                    <div className="bg-secondary p-3 rounded-lg border-l-4 border-muted-foreground">
+                      <p className="text-sm text-foreground">"Do you guys do ceramic coating on a Tesla?"</p>
+                    </div>
+                    <div className="bg-primary/10 p-3 rounded-lg border-l-4 border-primary">
+                      <p className="text-sm text-foreground">"Absolutely! Ceramic coating is one of our specialties. What year Tesla?"</p>
+                    </div>
+                  </div>
+                  <div className="mt-4 p-3 rounded-lg bg-success/10 border border-success/30">
+                    <p className="text-sm font-semibold text-success flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4" />
+                      Lead captured • Logged to dashboard
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+
+          {/* Pillar 2: AI Dashboard */}
+          <motion.div
+            className="mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
+            <Card className="p-8 lg:p-12 bg-gradient-to-br from-accent/10 via-card to-card border-2 border-accent/30">
+              <div className="grid lg:grid-cols-2 gap-12 items-center">
+                <div className="order-2 lg:order-1">
+                  <div className="bg-background/50 backdrop-blur-sm rounded-2xl p-6 border border-border">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 rounded-lg bg-primary/20">
+                        <BarChart3 className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-foreground">AI Co-Pilot Dashboard</p>
+                        <p className="text-sm text-muted-foreground">Ask anything about your leads</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3 mb-4">
+                      <div className="bg-secondary p-3 rounded-lg">
+                        <p className="text-sm text-foreground font-medium mb-2">"Who's my hottest lead today?"</p>
+                        <div className="bg-background p-2 rounded text-xs text-muted-foreground">
+                          <p className="font-semibold text-accent mb-1">🔥 Mike Thompson - Porsche 911</p>
+                          <p>Wants full detail + ceramic coating ($680). Called 3 times. High urgency.</p>
+                        </div>
+                      </div>
+                      <div className="bg-secondary p-3 rounded-lg">
+                        <p className="text-sm text-foreground font-medium mb-2">"Show me G-Wagons this week"</p>
+                        <div className="bg-background p-2 rounded text-xs text-muted-foreground">
+                          <p>2 G-Wagons: Sarah K. (ceramic + PPF), David R. (interior detail). Total value: $1,450</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="bg-success/10 p-2 rounded text-center">
+                        <p className="text-lg font-bold text-success">12</p>
+                        <p className="text-xs text-muted-foreground">Hot Leads</p>
+                      </div>
+                      <div className="bg-primary/10 p-2 rounded text-center">
+                        <p className="text-lg font-bold text-primary">5</p>
+                        <p className="text-xs text-muted-foreground">Booked</p>
+                      </div>
+                      <div className="bg-accent/10 p-2 rounded text-center">
+                        <p className="text-lg font-bold text-accent">$2.1k</p>
+                        <p className="text-xs text-muted-foreground">Pipeline</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="order-1 lg:order-2">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/20 text-accent text-sm font-semibold mb-4">
+                    <Sparkles className="w-4 h-4" />
+                    Pillar #2
+                  </div>
+                  <h3 className="text-3xl font-bold text-foreground mb-4">
+                    AI Dashboard "Co-Pilot"
+                  </h3>
+                  <p className="text-lg text-muted-foreground mb-6">
+                    Chat with your leads like ChatGPT. "Who's my hottest lead?" "Show me all G-Wagons this week." AI knows everything.
+                  </p>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Ask questions in plain English</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">See intent score: high/medium/low urgency</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Filter by car type, service, or booking status</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Full call history + transcripts for each lead</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+
+          {/* Pillar 3: SMS Closer */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            <Card className="p-8 lg:p-12 bg-gradient-to-br from-success/10 via-card to-card border-2 border-success/30">
+              <div className="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-success/20 text-success text-sm font-semibold mb-4">
+                    <MessageSquare className="w-4 h-4" />
+                    Pillar #3
+                  </div>
+                  <h3 className="text-3xl font-bold text-foreground mb-4">
+                    Native SMS "Closer"
+                  </h3>
+                  <p className="text-lg text-muted-foreground mb-6">
+                    1-tap to text leads. AI writes the message. Opens your phone's native SMS. <span className="font-semibold text-foreground">Bypasses A2P spam filters</span> = 10x better delivery.
+                  </p>
+                  <ul className="space-y-3 mb-6">
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">AI drafts personalized SMS for each lead</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Uses YOUR phone number (not a spam shortcode)</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">Customer replies go to your phone - real conversation</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                      <span className="text-foreground">No Twilio fees, no carrier blocking</span>
+                    </li>
+                  </ul>
+                  <div className="p-4 rounded-xl bg-accent/10 border border-accent/30">
+                    <p className="text-sm font-semibold text-foreground mb-2">🎯 Why This Matters</p>
+                    <p className="text-sm text-muted-foreground">
+                      Regular SMS services get flagged as spam (10-30% delivery). <span className="font-semibold text-foreground">Native SMS from your personal number = 90%+ delivery</span>. Your texts actually get read.
+                    </p>
+                  </div>
+                </div>
+                <div className="bg-background/50 backdrop-blur-sm rounded-2xl p-6 border border-border">
+                  <div className="bg-card p-4 rounded-xl border border-border mb-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-sm font-semibold text-foreground">Mike Thompson</p>
+                      <Badge variant="high" className="text-xs">High Intent</Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Wants: Ceramic coating • Car: Tesla Model 3 • Called 2 hours ago
+                    </p>
+                    <Button variant="success" className="w-full mb-2">
+                      <MessageSquare className="w-4 h-4 mr-2" />
+                      Send Follow-Up Text
+                    </Button>
+                  </div>
+
+                  <div className="bg-primary/5 p-4 rounded-xl border border-primary/20">
+                    <p className="text-xs font-semibold text-primary mb-2">✨ AI DRAFTED MESSAGE:</p>
+                    <div className="bg-background p-3 rounded-lg mb-3">
+                      <p className="text-sm text-foreground">
+                        "Hey Mike! Thanks for calling about ceramic coating for your Tesla. I have Saturday 2pm or Monday 10am available. Which works better for you? Full detail + coating is $680 and takes about 6 hours. Let me know! 🚗"
+                      </p>
+                    </div>
+                    <p className="text-xs text-muted-foreground flex items-center gap-2">
+                      <Zap className="w-3 h-3" />
+                      Tap to send from YOUR phone number (bypasses spam filters)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+
+          {/* Why This Combination is Unbeatable */}
+          <motion.div
+            className="mt-16 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+          >
+            <Card className="p-8 bg-gradient-to-r from-primary/10 via-accent/10 to-success/10 border-2 border-primary/30">
+              <h3 className="text-2xl font-bold text-foreground mb-4">
+                This Is Why Competitors Can't Copy You
+              </h3>
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-6">
+                Most "AI receptionists" just answer the phone and dump data in a table. You get <span className="font-semibold text-foreground">voice + AI chat insights + native SMS delivery</span> that actually closes leads. They'd need to build 3 products. You get it in one.
+              </p>
+              <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div className="p-4 rounded-xl bg-background/50">
+                  <Phone className="w-8 h-8 text-primary mx-auto mb-2" />
+                  <p className="font-semibold text-foreground mb-1">Catch Every Call</p>
+                  <p className="text-sm text-muted-foreground">Never miss a detail</p>
+                </div>
+                <div className="p-4 rounded-xl bg-background/50">
+                  <Sparkles className="w-8 h-8 text-accent mx-auto mb-2" />
+                  <p className="font-semibold text-foreground mb-1">Know Who to Prioritize</p>
+                  <p className="text-sm text-muted-foreground">AI shows hottest leads</p>
+                </div>
+                <div className="p-4 rounded-xl bg-background/50">
+                  <MessageSquare className="w-8 h-8 text-success mx-auto mb-2" />
+                  <p className="font-semibold text-foreground mb-1">Close with SMS</p>
+                  <p className="text-sm text-muted-foreground">90%+ delivery rate</p>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-16 text-center">
+            What You Get
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Bot className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground mb-1">Answers Like a Detailer</h3>
+                <p className="text-sm text-muted-foreground">Knows ceramic coating from wax. Explains your packages clearly.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground mb-1">Books Appointments</h3>
+                <p className="text-sm text-muted-foreground">Collects car type, service, date. Sends qualified leads instantly.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <MessageSquare className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground mb-1">Handles Questions</h3>
+                <p className="text-sm text-muted-foreground">"How much for SUV interior?" AI answers based on your pricing.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <BarChart3 className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground mb-1">Dashboard</h3>
+                <p className="text-sm text-muted-foreground">See every lead with car details, service, and call recording.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Shield className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground mb-1">Smart Caller ID</h3>
+                <p className="text-sm text-muted-foreground">Regular customers bypass AI. Only new leads get handled.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Bell className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground mb-1">Hot Lead Alerts</h3>
+                <p className="text-sm text-muted-foreground">"G-Wagon wants ceramic coating" → Instant text to your phone.</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Comparison Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-card/50 to-transparent">
-        <div className="max-w-5xl mx-auto">
-          <motion.div 
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Without Answerly vs. With Answerly
-            </h2>
-          </motion.div>
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-secondary/30">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-4xl font-bold text-foreground mb-12 text-center">
+            Before & After
+          </h2>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            <ComparisonCard
-              title="Without Answerly"
-              isNegative
-              items={[
-                "Missed calls go to voicemail (80% don't leave one)",
-                "Leads call your competitors instead",
-                "You stress about missing calls while working",
-                "No idea how many jobs you're losing",
-                "Manually texting back hours later"
-              ]}
-            />
-            <ComparisonCard
-              title="With Answerly"
-              items={[
-                "Every missed call gets an instant text back",
-                "Leads book directly from your message",
-                "Work stress-free knowing leads are handled",
-                "Dashboard shows exactly what's happening",
-                "AI handles common questions for you"
-              ]}
-            />
+          <div className="grid md:grid-cols-2 gap-12">
+            <div>
+              <h3 className="text-xl font-bold text-destructive mb-6">Without DetailPilotAI</h3>
+              <ul className="space-y-3">
+                <li className="flex gap-3 text-foreground">
+                  <X className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+                  <span>5-8 missed calls = $1,200-$2,400 lost/month</span>
+                </li>
+                <li className="flex gap-3 text-foreground">
+                  <X className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+                  <span>Customers call your competitor instead</span>
+                </li>
+                <li className="flex gap-3 text-foreground">
+                  <X className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+                  <span>Stress every time phone buzzes</span>
+                </li>
+                <li className="flex gap-3 text-foreground">
+                  <X className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+                  <span>No clue how many G-Wagons you're missing</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-success mb-6">With DetailPilotAI</h3>
+              <ul className="space-y-3">
+                <li className="flex gap-3 text-foreground">
+                  <Check className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                  <span>AI picks up in 2 sec, books the job</span>
+                </li>
+                <li className="flex gap-3 text-foreground">
+                  <Check className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                  <span>Every lead captured with full details</span>
+                </li>
+                <li className="flex gap-3 text-foreground">
+                  <Check className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                  <span>Detail in peace, phone is handled</span>
+                </li>
+                <li className="flex gap-3 text-foreground">
+                  <Check className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                  <span>Dashboard shows every opportunity</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -468,10 +712,10 @@ export default function LandingPage() {
               Simple Pricing
             </Badge>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-              Pay Less Than One Lost Job
+              Costs Less Than One Ceramic Coating
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Answerly pays for itself after recovering just one job per month.
+              Recover one detail per month and DetailPilotAI pays for itself. Most shops book 3-5 extra details in week one.
             </p>
           </motion.div>
 
@@ -498,37 +742,37 @@ export default function LandingPage() {
                 </div>
 
                 <div className="space-y-4 mb-8">
-                  <PricingFeature 
-                    title="AI answers every call 24/7" 
-                    description="Sounds natural, picks up in 2 seconds" 
+                  <PricingFeature
+                    title="AI answers every call 24/7"
+                    description="Trained on detailing. Picks up in 2 seconds, sounds professional"
                   />
-                  <PricingFeature 
-                    title="Collects booking information" 
-                    description="Name, phone, vehicle, service, preferred date" 
+                  <PricingFeature
+                    title="Knows your services & pricing"
+                    description="Ceramic coating, paint correction, interior, packages - you customize it all"
                   />
-                  <PricingFeature 
-                    title="Instant lead notifications" 
-                    description="Text + email with details within seconds" 
+                  <PricingFeature
+                    title="Collects lead details automatically"
+                    description="Name, phone, car type, service needed, when they want it"
                   />
-                  <PricingFeature 
-                    title="Call recordings & transcripts" 
-                    description="Listen to every call, read transcripts" 
+                  <PricingFeature
+                    title="Instant hot lead alerts"
+                    description="'G-Wagon wants ceramic coating + PPF' → Text to your phone immediately"
                   />
-                  <PricingFeature 
-                    title="Lead dashboard" 
-                    description="Track leads, mark contacted/booked" 
+                  <PricingFeature
+                    title="Call recordings & transcripts"
+                    description="Hear exactly what customer said, read full conversation"
                   />
-                  <PricingFeature 
-                    title="Known caller filter" 
-                    description="Family/friends bypass AI (optional)" 
+                  <PricingFeature
+                    title="Detailer dashboard"
+                    description="See all leads with car details, service, contact info"
                   />
-                  <PricingFeature 
-                    title="Unlimited calls" 
-                    description="No per-call fees, no hidden costs" 
+                  <PricingFeature
+                    title="Smart caller filtering"
+                    description="Regular customers & vendors bypass AI - only new leads handled"
                   />
-                  <PricingFeature 
-                    title="Cancel anytime" 
-                    description="No contract, no commitments" 
+                  <PricingFeature
+                    title="Unlimited calls + cancel anytime"
+                    description="No per-call fees. No contract. Cancel with 1 click."
                   />
                 </div>
 
@@ -578,33 +822,33 @@ export default function LandingPage() {
                 <p className="text-sm text-muted-foreground mb-6">Limited Time</p>
 
                 <p className="text-foreground mb-4">
-                  First 20 customers get lifetime founding member pricing
+                  First 20 detailing shops get lifetime founding member pricing
                 </p>
 
                 <div className="mb-4">
                   <span className="text-4xl font-bold text-accent">$99</span>
-                  <span className="text-foreground font-semibold">/month forever</span>
+                  <span className="text-foreground font-semibold">/month locked in forever</span>
                 </div>
 
-                <p className="text-success font-medium mb-2">(Save $50 every month)</p>
+                <p className="text-success font-medium mb-2">(Save $50/month = One free interior detail)</p>
                 <p className="text-sm text-muted-foreground mb-6">
-                  Regular price: <span className="line-through">$149/month</span>
+                  Regular price: <span className="line-through">$149/month</span> after founding spots fill
                 </p>
 
                 <div className="bg-background/50 rounded-lg p-3 mb-6">
-                  <p className="text-foreground font-semibold">Spots remaining: <span className="text-accent">15/20</span></p>
+                  <p className="text-foreground font-semibold">Detailing shops remaining: <span className="text-accent">15/20</span></p>
                 </div>
 
                 <Link to="/signup" className="block">
-                  <Button variant="accent" size="lg" className="w-full text-base group">
-                    Lock In $99/mo Rate
+                  <Button variant="accent" size="lg" className="w-full text-base group shadow-2xl shadow-accent/30">
+                    Lock In $99/mo Founding Rate
                     <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
 
                 <p className="text-sm text-muted-foreground mt-4 flex items-center justify-center gap-1">
                   <Clock className="w-4 h-4" />
-                  Offer expires when all 20 spots are filled
+                  Price goes to $149/mo when all founding spots are gone
                 </p>
               </div>
             </Card>
@@ -626,30 +870,30 @@ export default function LandingPage() {
               Testimonials
             </Badge>
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Detailers Love Answerly
+              Detailers Love DetailPilotAI
             </h2>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6">
             <TestimonialCard
-              quote="Recovered 3 jobs in my first week. That's over $400 that would've walked. The ROI is insane."
+              quote="First week: AI booked 2 ceramic coatings and a full interior while I was elbow-deep in a Tahoe. That's $680 I would've missed. Paid for itself 7x over already."
               author="Marcus J."
-              business="Pristine Auto Detailing"
-              stat="3 jobs recovered"
+              business="Elite Auto Detail - Miami"
+              stat="$680 week 1"
               delay={0}
             />
             <TestimonialCard
-              quote="The AI answering is a game-changer. It handles all those 'how much for an SUV?' texts while I work."
+              quote="I do mobile detailing solo. Phone used to ring off the hook while I'm working. Now the AI handles it all. It even knows to say I'm booked 3 weeks out for paint corrections."
               author="David R."
-              business="Shine Mobile Detail"
-              stat="71% recovery rate"
+              business="Shine Mobile Detail - Dallas"
+              stat="71% recovery"
               delay={0.1}
             />
             <TestimonialCard
-              quote="Setup took literally 5 minutes. Now I don't stress about my phone while detailing. Life-changing."
+              quote="Setup was 5 minutes. Put in my packages and pricing. Now it books my $200+ details automatically. I just show up and detail. Game changer."
               author="Sarah K."
-              business="Fresh Start Detailing"
-              stat="$540/week recovered"
+              business="Precision Detailing - Phoenix"
+              stat="4-6 details/week"
               delay={0.2}
             />
           </div>
@@ -671,25 +915,29 @@ export default function LandingPage() {
           </motion.div>
 
           <div className="space-y-4">
-            <FAQItem 
-              question="Will it text my friends and family?"
-              answer="No. Answerly only texts callers who you missed while busy. You can also add known numbers (family, vendors) to a 'never auto-text' list."
+            <FAQItem
+              question="Does it know detailing terminology?"
+              answer="Yes. The AI is trained on auto detailing. It knows ceramic coating, paint correction, clay bar, PPF, interior shampooing, etc. You customize your services and pricing during setup, and it answers based on that."
             />
-            <FAQItem 
-              question="Does it replace my phone?"
-              answer="Not at all. Answerly works alongside your existing phone. When you miss a call, it steps in to follow up automatically."
+            <FAQItem
+              question="Will it call my regular customers or vendors?"
+              answer="No. You can whitelist numbers (regular customers, product suppliers, family). They'll never get the AI. Only new leads who don't leave voicemail get handled."
             />
-            <FAQItem 
-              question="Can I turn AI off?"
-              answer="Absolutely. AI call answering is a Pro feature you can toggle on/off anytime. Starter plan uses SMS only."
+            <FAQItem
+              question="What if someone asks for a custom quote?"
+              answer="AI collects all the details (car type, condition, services wanted) and sends you a hot lead notification. You call them back with the custom quote. It doesn't give prices it's not trained on."
             />
-            <FAQItem 
-              question="How fast does it respond?"
-              answer="Within 5 seconds. The moment a call goes to voicemail, Answerly sends your custom message."
+            <FAQItem
+              question="Does this work for mobile detailing?"
+              answer="Absolutely. The AI explains you're mobile, asks for their location, and books the appointment. Works great for mobile-only, shop-only, or hybrid setups."
             />
-            <FAQItem 
-              question="What if I want to cancel?"
-              answer="Cancel anytime with one click. No contracts, no hidden fees, no hassle. Your data is yours."
+            <FAQItem
+              question="How fast is setup?"
+              answer="2 minutes. Enter your shop name, services you offer, your pricing, and business hours. The AI trains on your info instantly. You're live immediately."
+            />
+            <FAQItem
+              question="Can I cancel anytime?"
+              answer="Yes. No contracts. Cancel with one click. If you're not booking more details, we don't deserve your money."
             />
           </div>
         </div>
@@ -710,20 +958,20 @@ export default function LandingPage() {
             
             <div className="relative">
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-                Stop Losing Jobs Today
+                Stop Losing Details to Your Competitors
               </h2>
               <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
-                Every day without Answerly is another 5-8 potential jobs walking to your competition. 
-                Start your free trial now.
+                Every missed call is a $150-300 detail going to the shop down the street.
+                Let AI handle your phone while you handle their cars.
               </p>
               <Link to="/signup">
-                <Button variant="hero" size="xl" className="text-base group">
-                  Start 7-Day Free Trial
+                <Button variant="hero" size="xl" className="text-base group shadow-2xl shadow-accent/30">
+                  Start Free Trial - Book More Details
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
               <p className="text-sm text-muted-foreground mt-4">
-                No credit card required • Setup in 2 minutes
+                No credit card • 2-min setup • Built for detailers
               </p>
             </div>
           </motion.div>
@@ -733,11 +981,9 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-border">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-orange-500 flex items-center justify-center">
-              <Phone className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-lg font-bold text-foreground">Answerly</span>
+          <div className="flex items-center gap-2.5">
+            <Logo size="sm" />
+            <span className="text-lg font-bold text-foreground">DetailPilot<span className="text-primary">AI</span></span>
           </div>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
@@ -745,7 +991,7 @@ export default function LandingPage() {
             <a href="#" className="hover:text-foreground transition-colors">Contact</a>
           </div>
           <p className="text-sm text-muted-foreground">
-            © 2025 Answerly.io. All rights reserved.
+            © 2025 DetailPilotAI.io. All rights reserved.
           </p>
         </div>
       </footer>

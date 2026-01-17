@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import AppLayout from "@/components/AppLayout";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
+import { connectGoogleCalendar, disconnectGoogleCalendar, isGoogleCalendarConnected } from "@/lib/googleCalendar";
+import {
   Building2,
   Clock,
   MessageSquare,
@@ -15,7 +20,14 @@ import {
   Bell,
   ChevronRight,
   Info,
-  Lock
+  Lock,
+  Phone,
+  Mic,
+  Save,
+  Loader2,
+  Calendar,
+  CheckCircle2,
+  XCircle
 } from "lucide-react";
 
 const settingsSections = [
@@ -75,11 +87,138 @@ const proSettings = [
   },
 ];
 
+// Available Vapi voices
+const VAPI_VOICES = [
+  { id: 'alloy', name: 'Alloy', gender: 'neutral', description: 'Balanced and professional' },
+  { id: 'echo', name: 'Echo', gender: 'male', description: 'Clear and confident' },
+  { id: 'fable', name: 'Fable', gender: 'neutral', description: 'Warm and engaging' },
+  { id: 'onyx', name: 'Onyx', gender: 'male', description: 'Deep and authoritative' },
+  { id: 'nova', name: 'Nova', gender: 'female', description: 'Friendly and upbeat' },
+  { id: 'shimmer', name: 'Shimmer', gender: 'female', description: 'Bright and energetic' },
+];
+
 export default function Settings() {
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [userData, setUserData] = useState<any>(null);
+  const [showCalendarSuccess, setShowCalendarSuccess] = useState(false);
+
+  // Form state
+  const [businessName, setBusinessName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [vapiPhoneNumber, setVapiPhoneNumber] = useState('');
+  const [bookingLink, setBookingLink] = useState('');
+  const [selectedVoice, setSelectedVoice] = useState('nova');
+  const [forwardAfterRings, setForwardAfterRings] = useState(3);
+
+  // Toggle states
   const [aiEnabled, setAiEnabled] = useState(true);
   const [autoSmsEnabled, setAutoSmsEnabled] = useState(true);
   const [afterHoursAi, setAfterHoursAi] = useState(true);
   const [busyModeAi, setBusyModeAi] = useState(false);
+
+  // Load user settings on mount
+  useEffect(() => {
+    loadUserSettings();
+
+    // Check if redirected back from Google OAuth
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('calendar_connected') === 'true') {
+      setShowCalendarSuccess(true);
+      // Clear URL params
+      window.history.replaceState({}, '', '/settings');
+      // Hide success message after 5 seconds
+      setTimeout(() => setShowCalendarSuccess(false), 5000);
+    }
+  }, [user]);
+
+  const loadUserSettings = async () => {
+    if (!user) return;
+
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        setUserData(data);
+        setBusinessName(data.business_name || '');
+        setPhoneNumber(data.phone_number || '');
+        setVapiPhoneNumber(data.vapi_phone_number || '');
+        setBookingLink(data.booking_link || '');
+        setForwardAfterRings(data.forward_after_rings || 3);
+        setAutoSmsEnabled(data.auto_sms_enabled ?? true);
+        // Voice selection would be stored in vapi_assistant_id or a separate field
+      }
+    } catch (error) {
+      console.error('Error loading settings:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveSettings = async () => {
+    if (!user) return;
+
+    try {
+      setSaving(true);
+      const { error } = await supabase
+        .from('users')
+        .update({
+          business_name: businessName,
+          phone_number: phoneNumber,
+          vapi_phone_number: vapiPhoneNumber,
+          booking_link: bookingLink,
+          forward_after_rings: forwardAfterRings,
+          auto_sms_enabled: autoSmsEnabled,
+        })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      alert('Settings saved successfully!');
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      alert('Failed to save settings. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleConnectGoogleCalendar = () => {
+    if (!user) return;
+    connectGoogleCalendar(user.id);
+  };
+
+  const handleDisconnectGoogleCalendar = async () => {
+    if (!user) return;
+    if (!confirm('Are you sure you want to disconnect Google Calendar?')) return;
+
+    try {
+      await disconnectGoogleCalendar(user.id);
+      await loadUserSettings(); // Reload user data
+      alert('Google Calendar disconnected successfully');
+    } catch (error) {
+      console.error('Error disconnecting calendar:', error);
+      alert('Failed to disconnect Google Calendar');
+    }
+  };
+
+  if (loading) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center h-96">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
@@ -94,17 +233,295 @@ export default function Settings() {
             Settings
           </h1>
           <p className="text-muted-foreground">
-            Manage your Answerly configuration
+            Manage your DetailPilotAI configuration
           </p>
+        </motion.div>
+
+        {/* Voice AI Configuration */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Mic className="w-5 h-5" />
+            Voice AI Configuration
+          </h2>
+          <Card variant="premium" className="p-6 space-y-6">
+            {/* Phone Number Display */}
+            <div>
+              <Label htmlFor="vapiPhone" className="text-sm font-medium">
+                Your AI Phone Number
+              </Label>
+              <div className="mt-2 flex items-center gap-3">
+                <div className="flex-1 relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    id="vapiPhone"
+                    value={vapiPhoneNumber}
+                    onChange={(e) => setVapiPhoneNumber(e.target.value)}
+                    placeholder="+1 (555) 000-0000"
+                    className="pl-10"
+                  />
+                </div>
+                <Badge variant="success">Active</Badge>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                This is the number customers will call. Forward your existing number here.
+              </p>
+            </div>
+
+            {/* Voice Selection */}
+            <div>
+              <Label className="text-sm font-medium mb-3 block">
+                AI Voice
+              </Label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {VAPI_VOICES.map((voice) => (
+                  <button
+                    key={voice.id}
+                    onClick={() => setSelectedVoice(voice.id)}
+                    className={`p-4 rounded-xl border-2 transition-all text-left ${
+                      selectedVoice === voice.id
+                        ? 'border-primary bg-primary/5'
+                        : 'border-border hover:border-primary/50'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between mb-1">
+                      <span className="font-medium text-foreground">{voice.name}</span>
+                      <Badge variant="secondary" className="text-xs">
+                        {voice.gender}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {voice.description}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Forward After Rings */}
+            <div>
+              <Label htmlFor="forwardRings" className="text-sm font-medium">
+                Forward to AI After
+              </Label>
+              <div className="mt-2 flex items-center gap-3">
+                <Input
+                  id="forwardRings"
+                  type="number"
+                  min="0"
+                  max="10"
+                  value={forwardAfterRings}
+                  onChange={(e) => setForwardAfterRings(parseInt(e.target.value))}
+                  className="w-24"
+                />
+                <span className="text-sm text-muted-foreground">rings</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                If you don't answer after this many rings, AI takes over. Set to 0 for immediate AI answering.
+              </p>
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Business Information */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-8"
+        >
+          <h2 className="text-lg font-semibold text-foreground mb-4">
+            Business Information
+          </h2>
+          <Card variant="premium" className="p-6 space-y-4">
+            <div>
+              <Label htmlFor="businessName">Business Name</Label>
+              <Input
+                id="businessName"
+                value={businessName}
+                onChange={(e) => setBusinessName(e.target.value)}
+                placeholder="Pristine Auto Detailing"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="phoneNumber">Your Phone Number</Label>
+              <Input
+                id="phoneNumber"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="+1 (555) 123-4567"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Used for notifications and forwarding
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="bookingLink">Booking Link</Label>
+              <div className="relative">
+                <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  id="bookingLink"
+                  value={bookingLink}
+                  onChange={(e) => setBookingLink(e.target.value)}
+                  placeholder="https://calendly.com/your-business"
+                  className="pl-10"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                AI will share this link when customers want to book
+              </p>
+            </div>
+
+            <div className="pt-4">
+              <Button
+                onClick={saveSettings}
+                disabled={saving}
+                className="w-full sm:w-auto"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    Save Changes
+                  </>
+                )}
+              </Button>
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Google Calendar Integration */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="mb-8"
+        >
+          <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Calendar className="w-5 h-5" />
+            Google Calendar Integration
+          </h2>
+
+          {showCalendarSuccess && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 p-4 rounded-xl bg-green-500/10 border border-green-500/20"
+            >
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="w-5 h-5 text-green-600" />
+                <p className="text-sm font-medium text-green-600">
+                  Google Calendar connected successfully!
+                </p>
+              </div>
+            </motion.div>
+          )}
+
+          <Card variant="premium" className="p-6">
+            {userData && isGoogleCalendarConnected(userData) ? (
+              <div className="space-y-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-4">
+                    <div className="p-2 rounded-xl bg-green-500/10 text-green-600">
+                      <CheckCircle2 className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground mb-1">Connected</h3>
+                      <p className="text-sm text-muted-foreground mb-1">
+                        Your Google Calendar is connected and syncing
+                      </p>
+                      {userData.google_calendar_email && (
+                        <p className="text-xs text-muted-foreground">
+                          Account: {userData.google_calendar_email}
+                        </p>
+                      )}
+                      {userData.google_calendar_connected_at && (
+                        <p className="text-xs text-muted-foreground">
+                          Connected: {new Date(userData.google_calendar_connected_at).toLocaleDateString()}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <Badge variant="success">Active</Badge>
+                </div>
+
+                <div className="p-4 rounded-xl bg-secondary/50">
+                  <h4 className="text-sm font-medium text-foreground mb-2">What's syncing:</h4>
+                  <ul className="text-sm text-muted-foreground space-y-1">
+                    <li>• Appointments booked by AI are added to your calendar</li>
+                    <li>• AI checks your availability in real-time during calls</li>
+                    <li>• Calendar events appear on your Calendar page</li>
+                  </ul>
+                </div>
+
+                <Button
+                  variant="outline"
+                  onClick={handleDisconnectGoogleCalendar}
+                  className="w-full sm:w-auto"
+                >
+                  <XCircle className="w-4 h-4 mr-2" />
+                  Disconnect Google Calendar
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex items-start gap-4">
+                  <div className="p-2 rounded-xl bg-secondary text-muted-foreground">
+                    <Calendar className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-foreground mb-2">
+                      Connect Your Google Calendar
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Allow DetailPilotAI to sync appointments with your Google Calendar. Your AI receptionist will be able to check your real-time availability and book appointments directly.
+                    </p>
+
+                    <div className="p-4 rounded-xl bg-secondary/50 mb-4">
+                      <h4 className="text-sm font-medium text-foreground mb-2">Benefits:</h4>
+                      <ul className="text-sm text-muted-foreground space-y-1">
+                        <li>✓ AI checks your real availability during calls</li>
+                        <li>✓ Automatic appointment booking to your calendar</li>
+                        <li>✓ Two-way sync: updates flow both directions</li>
+                        <li>✓ View all bookings in one place</li>
+                      </ul>
+                    </div>
+
+                    <Button
+                      variant="accent"
+                      onClick={handleConnectGoogleCalendar}
+                      className="w-full sm:w-auto"
+                    >
+                      <Calendar className="w-4 h-4 mr-2" />
+                      Connect Google Calendar
+                    </Button>
+
+                    <p className="text-xs text-muted-foreground mt-3">
+                      Optional: You can use DetailPilotAI without connecting Google Calendar. Appointments will still be tracked internally.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </Card>
         </motion.div>
 
         {/* General Settings */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
           className="mb-8"
         >
-          <h2 className="text-lg font-semibold text-foreground mb-4">General</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4">Advanced Settings</h2>
           <Card variant="premium" className="divide-y divide-border overflow-hidden">
             {settingsSections.map((section) => (
               <button
@@ -130,7 +547,7 @@ export default function Settings() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+          transition={{ delay: 0.3 }}
           className="mb-8"
         >
           <Card variant="premium" className="p-6">
@@ -182,7 +599,7 @@ export default function Settings() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.4 }}
           className="mb-8"
         >
           <div className="flex items-center gap-2 mb-4">
@@ -297,7 +714,7 @@ export default function Settings() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.5 }}
         >
           <Card variant="premium" className="p-6 border-destructive/30">
             <div className="flex items-center gap-4 mb-4">

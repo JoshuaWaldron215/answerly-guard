@@ -98,7 +98,7 @@ export default function Bookings() {
               Bookings
             </h1>
             <p className="text-muted-foreground">
-              Appointments created through Answerly
+              Appointments created through DetailPilotAI
             </p>
           </div>
           <Button variant="accent">
