@@ -83,8 +83,22 @@ serve(async (req) => {
     const expiresAt = new Date(Date.now() + tokens.expires_in * 1000).toISOString();
 
     // Initialize Supabase client with service role key
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    // Use hardcoded values as fallback since auto-injection isn't working
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') || 'https://gyqezbnqkkgskmhsnzgw.supabase.co';
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SERVICE_ROLE_KEY');
+
+    console.log('Environment check:', {
+      hasUrl: !!supabaseUrl,
+      hasServiceKey: !!supabaseServiceKey,
+      urlValue: supabaseUrl,
+      availableEnvVars: Object.keys(Deno.env.toObject()),
+    });
+
+    if (!supabaseServiceKey) {
+      console.error('Missing Supabase service role key');
+      throw new Error('SUPABASE_SERVICE_ROLE_KEY not available. Please add SERVICE_ROLE_KEY to Edge Function secrets.');
+    }
+
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Store tokens in database
