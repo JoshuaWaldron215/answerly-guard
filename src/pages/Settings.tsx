@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/lib/supabase";
+import { supabase, db } from "@/lib/supabase";
+import type { PhoneNumberStatus, NotificationPreferences } from "@/lib/supabase";
 import { connectGoogleCalendar, disconnectGoogleCalendar, isGoogleCalendarConnected } from "@/lib/googleCalendar";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -31,7 +32,10 @@ import {
   XCircle,
   Play,
   Pause,
-  Volume2
+  Volume2,
+  AlertTriangle,
+  RefreshCw,
+  Mail
 } from "lucide-react";
 
 const settingsSections = [
@@ -127,6 +131,19 @@ export default function Settings() {
   const [playingVoice, setPlayingVoice] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Phone provisioning state
+  const [phoneStatus, setPhoneStatus] = useState<PhoneNumberStatus>('pending');
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [isProvisioning, setIsProvisioning] = useState(false);
+
+  // Notification preferences
+  const [notificationPrefs, setNotificationPrefs] = useState<NotificationPreferences>({
+    email_all_calls: true,
+    email_hot_leads: true,
+    email_missed_calls: true,
+    email_daily_summary: false,
+  });
+
   // Load user settings on mount
   useEffect(() => {
     loadUserSettings();
@@ -164,6 +181,13 @@ export default function Settings() {
         setSelectedVoice(data.vapi_voice || 'nova');
         setForwardAfterRings(data.forward_after_rings || 3);
         setAutoSmsEnabled(data.auto_sms_enabled ?? true);
+        // Phone provisioning status
+        setPhoneStatus(data.phone_number_status || 'pending');
+        setPhoneError(data.phone_provisioning_error || null);
+        // Notification preferences
+        if (data.notification_preferences) {
+          setNotificationPrefs(data.notification_preferences);
+        }
       }
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -240,6 +264,46 @@ export default function Settings() {
     } catch (error) {
       console.error('Error disconnecting calendar:', error);
       alert('Failed to disconnect Google Calendar');
+    }
+  };
+
+  // Provision phone number
+  const handleProvisionPhone = async () => {
+    if (!user) return;
+
+    setIsProvisioning(true);
+    setPhoneError(null);
+    setPhoneStatus('provisioning');
+
+    try {
+      const result = await db.provisionPhoneNumber(user.id);
+
+      if (result.success && result.phoneNumber) {
+        setVapiPhoneNumber(result.phoneNumber);
+        setPhoneStatus('active');
+        // Invalidate queries to refresh data
+        queryClient.invalidateQueries({ queryKey: ['user-data', user.id] });
+      } else {
+        setPhoneStatus('failed');
+        setPhoneError(result.error || 'Failed to provision phone number');
+      }
+    } catch (error: any) {
+      setPhoneStatus('failed');
+      setPhoneError(error.message || 'Failed to provision phone number');
+    } finally {
+      setIsProvisioning(false);
+    }
+  };
+
+  // Save notification preferences
+  const saveNotificationPrefs = async () => {
+    if (!user) return;
+
+    try {
+      await db.updateUser(user.id, { notification_preferences: notificationPrefs } as any);
+      queryClient.invalidateQueries({ queryKey: ['user-data', user.id] });
+    } catch (error) {
+      console.error('Error saving notification preferences:', error);
     }
   };
 
@@ -324,27 +388,126 @@ export default function Settings() {
             Voice AI Configuration
           </h2>
           <Card variant="premium" className="p-6 space-y-6">
-            {/* Phone Number Display */}
+            {/* Phone Number Display - with provisioning status */}
             <div>
-              <Label htmlFor="vapiPhone" className="text-sm font-medium">
+              <Label className="text-sm font-medium">
                 Your AI Phone Number
               </Label>
-              <div className="mt-2 flex items-center gap-3">
-                <div className="flex-1 relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    id="vapiPhone"
-                    value={vapiPhoneNumber}
-                    onChange={(e) => setVapiPhoneNumber(e.target.value)}
-                    placeholder="+1 (555) 000-0000"
-                    className="pl-10"
-                  />
+
+              {/* Active Status - Phone number is provisioned */}
+              {phoneStatus === 'active' && vapiPhoneNumber && (
+                <div className="mt-3">
+                  <div className="flex items-center gap-3 p-4 rounded-xl bg-green-500/10 border border-green-500/20">
+                    <div className="p-2 rounded-lg bg-green-500/20">
+                      <CheckCircle2 className="w-5 h-5 text-green-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-lg font-mono font-semibold text-foreground">
+                        {vapiPhoneNumber}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Forward your business phone to this number
+                      </p>
+                    </div>
+                    <Badge variant="success">Active</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Customers calling this number will be answered by your AI receptionist.
+                  </p>
                 </div>
-                <Badge variant="success">Active</Badge>
-              </div>
-              <p className="text-xs text-muted-foreground mt-2">
-                This is the number customers will call. Forward your existing number here.
-              </p>
+              )}
+
+              {/* Pending Status - Not yet provisioned */}
+              {phoneStatus === 'pending' && !vapiPhoneNumber && (
+                <div className="mt-3">
+                  <div className="flex items-start gap-3 p-4 rounded-xl bg-secondary/50 border border-border">
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <Phone className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-foreground mb-1">
+                        Get Your AI Phone Number
+                      </p>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Click below to provision a dedicated phone number for your AI receptionist. This number will be ready instantly.
+                      </p>
+                      <Button
+                        onClick={handleProvisionPhone}
+                        disabled={isProvisioning}
+                      >
+                        {isProvisioning ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Setting up...
+                          </>
+                        ) : (
+                          <>
+                            <Phone className="mr-2 h-4 w-4" />
+                            Get Phone Number
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Provisioning Status - In progress */}
+              {phoneStatus === 'provisioning' && (
+                <div className="mt-3">
+                  <div className="flex items-center gap-3 p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                    <div className="p-2 rounded-lg bg-blue-500/20">
+                      <RefreshCw className="w-5 h-5 text-blue-600 animate-spin" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-foreground">
+                        Setting up your phone number...
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        This usually takes 10-30 seconds. Please wait.
+                      </p>
+                    </div>
+                    <Badge variant="secondary">Provisioning</Badge>
+                  </div>
+                </div>
+              )}
+
+              {/* Failed Status - Error occurred */}
+              {phoneStatus === 'failed' && (
+                <div className="mt-3">
+                  <div className="flex items-start gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+                    <div className="p-2 rounded-lg bg-red-500/20">
+                      <AlertTriangle className="w-5 h-5 text-red-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-foreground mb-1">
+                        Phone Setup Failed
+                      </p>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        {phoneError || 'There was an error setting up your phone number. Please try again.'}
+                      </p>
+                      <Button
+                        onClick={handleProvisionPhone}
+                        disabled={isProvisioning}
+                        variant="outline"
+                      >
+                        {isProvisioning ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Retrying...
+                          </>
+                        ) : (
+                          <>
+                            <RefreshCw className="mr-2 h-4 w-4" />
+                            Try Again
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                    <Badge variant="destructive">Failed</Badge>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Voice Selection */}
@@ -620,6 +783,108 @@ export default function Settings() {
                 </div>
               </div>
             )}
+          </Card>
+        </motion.div>
+
+        {/* Email Notifications */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18 }}
+          className="mb-8"
+        >
+          <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Mail className="w-5 h-5" />
+            Email Notifications
+          </h2>
+          <Card variant="premium" className="p-6">
+            <p className="text-sm text-muted-foreground mb-4">
+              Choose which events trigger email notifications to keep you informed about your calls and leads.
+            </p>
+            <div className="space-y-4">
+              {/* All Calls */}
+              <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/30">
+                <div>
+                  <p className="font-medium text-foreground">All Calls</p>
+                  <p className="text-xs text-muted-foreground">Receive an email for every call your AI answers</p>
+                </div>
+                <button
+                  onClick={() => {
+                    const newPrefs = { ...notificationPrefs, email_all_calls: !notificationPrefs.email_all_calls };
+                    setNotificationPrefs(newPrefs);
+                    saveNotificationPrefs();
+                  }}
+                  className={`w-12 h-6 rounded-full transition-all relative ${
+                    notificationPrefs.email_all_calls ? "bg-primary" : "bg-muted"
+                  }`}
+                >
+                  <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${
+                    notificationPrefs.email_all_calls ? "left-7" : "left-1"
+                  }`} />
+                </button>
+              </div>
+
+              {/* Hot Leads Only */}
+              <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/30">
+                <div>
+                  <p className="font-medium text-foreground">Hot Leads Only</p>
+                  <p className="text-xs text-muted-foreground">Only get emails for high-intent callers</p>
+                </div>
+                <button
+                  onClick={() => {
+                    const newPrefs = { ...notificationPrefs, email_hot_leads: !notificationPrefs.email_hot_leads };
+                    setNotificationPrefs(newPrefs);
+                    saveNotificationPrefs();
+                  }}
+                  className={`w-12 h-6 rounded-full transition-all relative ${
+                    notificationPrefs.email_hot_leads ? "bg-primary" : "bg-muted"
+                  }`}
+                >
+                  <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${
+                    notificationPrefs.email_hot_leads ? "left-7" : "left-1"
+                  }`} />
+                </button>
+              </div>
+
+              {/* Missed Calls */}
+              <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/30">
+                <div>
+                  <p className="font-medium text-foreground">Missed Calls</p>
+                  <p className="text-xs text-muted-foreground">Get notified when calls go unanswered</p>
+                </div>
+                <button
+                  onClick={() => {
+                    const newPrefs = { ...notificationPrefs, email_missed_calls: !notificationPrefs.email_missed_calls };
+                    setNotificationPrefs(newPrefs);
+                    saveNotificationPrefs();
+                  }}
+                  className={`w-12 h-6 rounded-full transition-all relative ${
+                    notificationPrefs.email_missed_calls ? "bg-primary" : "bg-muted"
+                  }`}
+                >
+                  <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${
+                    notificationPrefs.email_missed_calls ? "left-7" : "left-1"
+                  }`} />
+                </button>
+              </div>
+
+              {/* Daily Summary */}
+              <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/30">
+                <div className="flex items-center gap-2">
+                  <div>
+                    <p className="font-medium text-foreground">Daily Summary</p>
+                    <p className="text-xs text-muted-foreground">Receive a daily recap of all activity</p>
+                  </div>
+                  <Badge variant="secondary" className="text-xs">Coming Soon</Badge>
+                </div>
+                <button
+                  disabled
+                  className="w-12 h-6 rounded-full bg-muted cursor-not-allowed relative opacity-50"
+                >
+                  <span className="absolute top-1 left-1 w-4 h-4 rounded-full bg-white" />
+                </button>
+              </div>
+            </div>
           </Card>
         </motion.div>
 
