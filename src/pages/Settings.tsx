@@ -244,9 +244,8 @@ export default function Settings() {
         setPlayingVoice(voiceId);
       })
       .catch((error) => {
-        console.error('Error playing voice preview:', error);
-        // Fallback: Show a helpful message
-        alert(`Voice preview for "${voiceId}" is not available yet.\n\nTo add voice previews:\n1. Generate sample audio using OpenAI's TTS API\n2. Save as /public/audio/voices/${voiceId}.mp3`);
+        console.log('Voice preview not available yet:', voiceId);
+        console.log('To add voice previews, run: npm run generate-voices');
         setPlayingVoice(null);
       });
 
