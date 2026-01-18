@@ -30,6 +30,7 @@ export type User = {
   auto_sms_enabled: boolean;
   vapi_phone_number: string | null;
   vapi_assistant_id: string | null;
+  vapi_voice: string | null;
   forward_after_rings: number;
   subscription_status: string;
   trial_ends_at: string;

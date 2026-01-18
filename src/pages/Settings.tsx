@@ -161,9 +161,9 @@ export default function Settings() {
         setPhoneNumber(data.phone_number || '');
         setVapiPhoneNumber(data.vapi_phone_number || '');
         setBookingLink(data.booking_link || '');
+        setSelectedVoice(data.vapi_voice || 'nova');
         setForwardAfterRings(data.forward_after_rings || 3);
         setAutoSmsEnabled(data.auto_sms_enabled ?? true);
-        // Voice selection would be stored in vapi_assistant_id or a separate field
       }
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -184,6 +184,7 @@ export default function Settings() {
           phone_number: phoneNumber,
           vapi_phone_number: vapiPhoneNumber,
           booking_link: bookingLink,
+          vapi_voice: selectedVoice,
           forward_after_rings: forwardAfterRings,
           auto_sms_enabled: autoSmsEnabled,
         })
@@ -193,6 +194,26 @@ export default function Settings() {
 
       // Invalidate queries so Dashboard updates immediately
       queryClient.invalidateQueries({ queryKey: ['user-data', user.id] });
+
+      // Update Vapi assistant voice (non-blocking)
+      try {
+        const { data: session } = await supabase.auth.getSession();
+        if (session?.session?.access_token) {
+          await fetch(
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-vapi-voice`,
+            {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${session.session.access_token}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ voiceId: selectedVoice }),
+            }
+          );
+        }
+      } catch (vapiError) {
+        console.log('Voice preference saved. Vapi assistant will be updated later:', vapiError);
+      }
 
       alert('Settings saved successfully!');
     } catch (error) {
