@@ -64,7 +64,7 @@ Expected output: `Success. No rows returned`
 
 **Link**: [Supabase Edge Function Settings](https://supabase.com/dashboard/project/gyqezbnqkkgskmhsnzgw/settings/functions)
 
-Scroll to **Secrets** section and add these **4 secrets**:
+Scroll to **Secrets** section and add these **5 secrets**:
 
 | Secret Name | Secret Value |
 |------------|--------------|
@@ -72,12 +72,18 @@ Scroll to **Secrets** section and add these **4 secrets**:
 | `GOOGLE_CLIENT_SECRET` | `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` |
 | `GOOGLE_REDIRECT_URI` | `https://gyqezbnqkkgskmhsnzgw.supabase.co/functions/v1/google-calendar-oauth` |
 | `FRONTEND_URL` | `https://detailpulse.io` |
+| `SERVICE_ROLE_KEY` | Get from [Project Settings → API](https://supabase.com/dashboard/project/gyqezbnqkkgskmhsnzgw/settings/api) - click "Reveal" under "service_role" key |
 
 Click **Bulk save** after adding all secrets.
 
-**Important**: Do NOT add `SUPABASE_URL` or `SUPABASE_SERVICE_ROLE_KEY` - Supabase provides these automatically to all Edge Functions!
+**To get SERVICE_ROLE_KEY**:
+1. Go to Project Settings → API
+2. Scroll to "Project API keys"
+3. Find `service_role` (marked as "secret")
+4. Click "Reveal" (eye icon)
+5. Copy the entire JWT token
 
-**Why?** Edge Function needs Google credentials to authenticate and redirect back to your domain. Supabase database access is automatic.
+**Why?** Supabase auto-injection of environment variables isn't working reliably, so we manually add the service role key (without SUPABASE_ prefix to avoid restrictions).
 
 ---
 
@@ -145,12 +151,13 @@ https://detailpulse.io/settings
 http://localhost:5173/settings
 ```
 
-**Supabase Edge Function Secrets** (4 secrets only - Supabase provides the rest automatically):
+**Supabase Edge Function Secrets** (5 secrets):
 ```
 GOOGLE_CLIENT_ID=810153537787-ndchbqqmfhmlcb7eiaqlemv4lqp8rpjc.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=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
 GOOGLE_REDIRECT_URI=https://gyqezbnqkkgskmhsnzgw.supabase.co/functions/v1/google-calendar-oauth
 FRONTEND_URL=https://detailpulse.io
+SERVICE_ROLE_KEY=<get from Supabase Project Settings → API → service_role key>
 ```
 
 **Vercel Environment Variables** (5 variables):
@@ -176,13 +183,16 @@ VITE_GOOGLE_REDIRECT_URI=https://gyqezbnqkkgskmhsnzgw.supabase.co/functions/v1/g
 
 **Problem**: Edge Function secrets not set
 
-**Fix**: Go to Supabase Dashboard → Settings → Edge Functions → Secrets and verify all 4 secrets are set. Do NOT manually add SUPABASE_* secrets!
+**Fix**: Go to Supabase Dashboard → Settings → Edge Functions → Secrets and verify all 5 secrets are set (including SERVICE_ROLE_KEY)
 
 ### "Missing authorization header" (401) error
 
 **Problem**: Edge Function can't access database to store tokens
 
-**Fix**: This usually means the Edge Function wasn't deployed properly. Try redeploying the function from Supabase Dashboard. Supabase automatically provides database access - you don't need to add SUPABASE_* secrets manually!
+**Fix**:
+1. Make sure you added `SERVICE_ROLE_KEY` secret (get from Project Settings → API)
+2. Redeploy the Edge Function with the latest code from your repo
+3. Check Edge Function logs for the actual error message
 
 ### Calendar events not showing
 
