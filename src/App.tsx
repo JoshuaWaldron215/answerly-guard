@@ -14,6 +14,7 @@ import Calls from "./pages/Calls";
 import Calendar from "./pages/Calendar";
 import Settings from "./pages/Settings";
 import Onboarding from "./pages/Onboarding";
+import Debug from "./pages/Debug";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -69,6 +70,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Settings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/debug"
+                element={
+                  <ProtectedRoute>
+                    <Debug />
                   </ProtectedRoute>
                 }
               />

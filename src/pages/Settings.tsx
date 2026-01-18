@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import AppLayout from "@/components/AppLayout";
 import { Card } from "@/components/ui/card";
@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { connectGoogleCalendar, disconnectGoogleCalendar, isGoogleCalendarConnected } from "@/lib/googleCalendar";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Building2,
   Clock,
@@ -27,7 +28,10 @@ import {
   Loader2,
   Calendar,
   CheckCircle2,
-  XCircle
+  XCircle,
+  Play,
+  Pause,
+  Volume2
 } from "lucide-react";
 
 const settingsSections = [
@@ -99,6 +103,7 @@ const VAPI_VOICES = [
 
 export default function Settings() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [userData, setUserData] = useState<any>(null);
@@ -117,6 +122,10 @@ export default function Settings() {
   const [autoSmsEnabled, setAutoSmsEnabled] = useState(true);
   const [afterHoursAi, setAfterHoursAi] = useState(true);
   const [busyModeAi, setBusyModeAi] = useState(false);
+
+  // Voice preview state
+  const [playingVoice, setPlayingVoice] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Load user settings on mount
   useEffect(() => {
@@ -152,9 +161,9 @@ export default function Settings() {
         setPhoneNumber(data.phone_number || '');
         setVapiPhoneNumber(data.vapi_phone_number || '');
         setBookingLink(data.booking_link || '');
+        setSelectedVoice(data.vapi_voice || 'nova');
         setForwardAfterRings(data.forward_after_rings || 3);
         setAutoSmsEnabled(data.auto_sms_enabled ?? true);
-        // Voice selection would be stored in vapi_assistant_id or a separate field
       }
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -175,12 +184,36 @@ export default function Settings() {
           phone_number: phoneNumber,
           vapi_phone_number: vapiPhoneNumber,
           booking_link: bookingLink,
+          vapi_voice: selectedVoice,
           forward_after_rings: forwardAfterRings,
           auto_sms_enabled: autoSmsEnabled,
         })
         .eq('id', user.id);
 
       if (error) throw error;
+
+      // Invalidate queries so Dashboard updates immediately
+      queryClient.invalidateQueries({ queryKey: ['user-data', user.id] });
+
+      // Update Vapi assistant voice (non-blocking)
+      try {
+        const { data: session } = await supabase.auth.getSession();
+        if (session?.session?.access_token) {
+          await fetch(
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-vapi-voice`,
+            {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${session.session.access_token}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ voiceId: selectedVoice }),
+            }
+          );
+        }
+      } catch (vapiError) {
+        console.log('Voice preference saved. Vapi assistant will be updated later:', vapiError);
+      }
 
       alert('Settings saved successfully!');
     } catch (error) {
@@ -209,6 +242,49 @@ export default function Settings() {
       alert('Failed to disconnect Google Calendar');
     }
   };
+
+  const handlePlayVoice = (voiceId: string) => {
+    // Stop currently playing audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+
+    // If clicking the same voice, just stop
+    if (playingVoice === voiceId) {
+      setPlayingVoice(null);
+      return;
+    }
+
+    // Try to play the audio sample
+    const audio = new Audio(`/audio/voices/${voiceId}.mp3`);
+    audioRef.current = audio;
+
+    audio.play()
+      .then(() => {
+        setPlayingVoice(voiceId);
+      })
+      .catch((error) => {
+        console.log('Voice preview not available yet:', voiceId);
+        console.log('To add voice previews, run: npm run generate-voices');
+        setPlayingVoice(null);
+      });
+
+    audio.onended = () => {
+      setPlayingVoice(null);
+      audioRef.current = null;
+    };
+  };
+
+  // Cleanup audio on unmount
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -278,26 +354,59 @@ export default function Settings() {
               </Label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {VAPI_VOICES.map((voice) => (
-                  <button
+                  <div
                     key={voice.id}
-                    onClick={() => setSelectedVoice(voice.id)}
-                    className={`p-4 rounded-xl border-2 transition-all text-left ${
+                    className={`p-4 rounded-xl border-2 transition-all ${
                       selectedVoice === voice.id
                         ? 'border-primary bg-primary/5'
                         : 'border-border hover:border-primary/50'
                     }`}
                   >
                     <div className="flex items-start justify-between mb-1">
-                      <span className="font-medium text-foreground">{voice.name}</span>
-                      <Badge variant="secondary" className="text-xs">
-                        {voice.gender}
-                      </Badge>
+                      <button
+                        onClick={() => setSelectedVoice(voice.id)}
+                        className="flex-1 text-left"
+                      >
+                        <span className="font-medium text-foreground">{voice.name}</span>
+                      </button>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary" className="text-xs">
+                          {voice.gender}
+                        </Badge>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePlayVoice(voice.id);
+                          }}
+                          className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors"
+                          title={`Preview ${voice.name} voice`}
+                        >
+                          {playingVoice === voice.id ? (
+                            <Pause className="w-4 h-4 text-primary" />
+                          ) : (
+                            <Play className="w-4 h-4 text-muted-foreground hover:text-primary" />
+                          )}
+                        </button>
+                      </div>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {voice.description}
-                    </p>
-                  </button>
+                    <button
+                      onClick={() => setSelectedVoice(voice.id)}
+                      className="w-full text-left"
+                    >
+                      <p className="text-xs text-muted-foreground">
+                        {voice.description}
+                      </p>
+                    </button>
+                  </div>
                 ))}
+              </div>
+              <div className="mt-3 p-3 rounded-lg bg-secondary/30 border border-border">
+                <div className="flex items-start gap-2">
+                  <Volume2 className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+                  <p className="text-xs text-muted-foreground">
+                    Click the play button to preview each voice. Samples demonstrate how the AI will sound on calls.
+                  </p>
+                </div>
               </div>
             </div>
 
