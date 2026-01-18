@@ -18,6 +18,22 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 });
 
 // TypeScript types for database tables
+export type PhoneNumberStatus = 'pending' | 'provisioning' | 'active' | 'failed';
+
+export type NotificationPreferences = {
+  email_all_calls: boolean;
+  email_hot_leads: boolean;
+  email_missed_calls: boolean;
+  email_daily_summary: boolean;
+};
+
+export type OnboardingSteps = {
+  phone_assigned: boolean;
+  voice_selected: boolean;
+  business_info_completed: boolean;
+  test_call_completed: boolean;
+};
+
 export type User = {
   id: string;
   email: string;
@@ -39,6 +55,13 @@ export type User = {
   google_calendar_token_expires_at: string | null;
   google_calendar_connected_at: string | null;
   google_calendar_email: string | null;
+  // New v1 fields
+  phone_number_status: PhoneNumberStatus;
+  phone_provisioning_error: string | null;
+  phone_provisioned_at: string | null;
+  notification_preferences: NotificationPreferences;
+  onboarding_completed: boolean;
+  onboarding_steps: OnboardingSteps;
   created_at: string;
   updated_at: string;
 };
@@ -179,5 +202,82 @@ export const db = {
       console.error('Error updating user:', error);
       throw error;
     }
-  }
+  },
+
+  // Provision a Vapi phone number for the user
+  async provisionPhoneNumber(userId: string, areaCode?: string): Promise<{ success: boolean; phoneNumber?: string; error?: string }> {
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      if (!session?.session?.access_token) {
+        throw new Error('Not authenticated');
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/provision-phone-number`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId, areaCode }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to provision phone number');
+      }
+
+      return {
+        success: true,
+        phoneNumber: result.phoneNumber,
+      };
+    } catch (error: any) {
+      console.error('Error provisioning phone number:', error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  },
+
+  // Get calls that need follow-up (for smart follow-up cards)
+  async getFollowUpCalls(userId: string): Promise<Call[]> {
+    const { data, error } = await supabase
+      .from('calls')
+      .select('*')
+      .eq('user_id', userId)
+      .in('outcome', ['waiting'])
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (error) {
+      console.error('Error fetching follow-up calls:', error);
+      return [];
+    }
+
+    return data || [];
+  },
+
+  // Get hot leads (high intent, not booked)
+  async getHotLeads(userId: string): Promise<Call[]> {
+    const { data, error } = await supabase
+      .from('calls')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('intent', 'high')
+      .neq('outcome', 'booked')
+      .neq('outcome', 'spam')
+      .order('created_at', { ascending: false })
+      .limit(5);
+
+    if (error) {
+      console.error('Error fetching hot leads:', error);
+      return [];
+    }
+
+    return data || [];
+  },
 };

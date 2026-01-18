@@ -78,7 +78,7 @@ serve(async (req) => {
 
     const { data: user, error: userError } = await supabase
       .from('users')
-      .select('id, email, business_name, booking_link, auto_sms_enabled')
+      .select('id, email, business_name, booking_link, auto_sms_enabled, notification_preferences')
       .eq('vapi_phone_number', vapiPhoneId)
       .single();
 
@@ -88,7 +88,7 @@ serve(async (req) => {
       // For MVP, let's try to find ANY user if no match (temporary fallback)
       const { data: fallbackUser } = await supabase
         .from('users')
-        .select('id, email, business_name, booking_link, auto_sms_enabled')
+        .select('id, email, business_name, booking_link, auto_sms_enabled, notification_preferences')
         .limit(1)
         .single();
 
@@ -151,55 +151,161 @@ serve(async (req) => {
 
 // Send email notification to business owner
 async function sendEmailNotification(supabase: any, user: any, call: any, callData: any) {
-  const emailSubject = `New Call: ${callData.caller_name || 'Unknown'} - ${callData.service_requested || 'No service specified'}`;
+  // Check user's notification preferences
+  const prefs = user.notification_preferences || {
+    email_all_calls: true,
+    email_hot_leads: true,
+    email_missed_calls: true,
+  };
+
+  // Determine if we should send based on preferences
+  const isHotLead = callData.intent === 'high';
+  const isMissedCall = callData.status === 'missed';
+
+  let shouldSend = false;
+  let emailType = 'new_call';
+
+  if (prefs.email_all_calls) {
+    shouldSend = true;
+  } else if (prefs.email_hot_leads && isHotLead) {
+    shouldSend = true;
+    emailType = 'hot_lead';
+  } else if (prefs.email_missed_calls && isMissedCall) {
+    shouldSend = true;
+    emailType = 'missed_call';
+  }
+
+  if (!shouldSend) {
+    console.log('Email notification skipped based on user preferences');
+    return;
+  }
+
+  // Determine subject based on call type
+  let emailSubject: string;
+  if (isHotLead) {
+    emailSubject = `🔥 Hot Lead: ${callData.caller_name || 'New Caller'} - ${callData.service_requested || 'Interested'}`;
+  } else if (isMissedCall) {
+    emailSubject = `📞 Missed Call from ${callData.caller_name || callData.phone_number}`;
+  } else {
+    emailSubject = `New Call: ${callData.caller_name || 'Unknown'} - ${callData.service_requested || 'AI Answered'}`;
+  }
+
+  const intentBadge = callData.intent === 'high'
+    ? '<span style="background-color:#ef4444;color:white;padding:2px 8px;border-radius:4px;font-size:12px;">HIGH INTENT</span>'
+    : callData.intent === 'medium'
+    ? '<span style="background-color:#f59e0b;color:white;padding:2px 8px;border-radius:4px;font-size:12px;">MEDIUM INTENT</span>'
+    : '<span style="background-color:#6b7280;color:white;padding:2px 8px;border-radius:4px;font-size:12px;">LOW INTENT</span>';
+
+  const vehicleInfo = [callData.vehicle_year, callData.vehicle_make, callData.vehicle_model]
+    .filter(Boolean)
+    .join(' ') || 'Not specified';
 
   const emailBody = `
-    <h2>New Call Received</h2>
-    <p>Hi ${user.business_name},</p>
-    <p>You just received a new call from your AI receptionist!</p>
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; padding: 24px; border-radius: 12px 12px 0 0; }
+        .content { background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px; }
+        .detail-row { display: flex; padding: 12px 0; border-bottom: 1px solid #e2e8f0; }
+        .detail-label { font-weight: 600; color: #64748b; width: 120px; }
+        .detail-value { color: #1e293b; }
+        .cta-button { display: inline-block; background: #3b82f6; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 16px; }
+        .footer { text-align: center; padding: 16px; color: #64748b; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1 style="margin:0;font-size:20px;">📞 ${isHotLead ? 'Hot Lead Alert!' : 'New Call Received'}</h1>
+          <p style="margin:8px 0 0 0;opacity:0.9;">Your AI receptionist handled a call</p>
+        </div>
+        <div class="content">
+          <div style="margin-bottom:16px;">${intentBadge}</div>
 
-    <h3>Call Details:</h3>
-    <ul>
-      <li><strong>Caller:</strong> ${callData.caller_name || 'Unknown'}</li>
-      <li><strong>Phone:</strong> ${callData.phone_number}</li>
-      <li><strong>Service:</strong> ${callData.service_requested || 'Not specified'}</li>
-      <li><strong>Vehicle:</strong> ${callData.vehicle_year || ''} ${callData.vehicle_make || ''} ${callData.vehicle_model || ''}</li>
-      <li><strong>Preferred Date:</strong> ${callData.preferred_date || 'Not specified'}</li>
-      <li><strong>Duration:</strong> ${callData.duration} seconds</li>
-      <li><strong>Intent:</strong> ${callData.intent}</li>
-      <li><strong>Outcome:</strong> ${callData.outcome}</li>
-    </ul>
+          <div class="detail-row">
+            <span class="detail-label">Caller</span>
+            <span class="detail-value"><strong>${callData.caller_name || 'Unknown'}</strong></span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Phone</span>
+            <span class="detail-value">${callData.phone_number}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Service</span>
+            <span class="detail-value">${callData.service_requested || 'Not specified'}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Vehicle</span>
+            <span class="detail-value">${vehicleInfo}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Preferred Date</span>
+            <span class="detail-value">${callData.preferred_date || 'Not specified'}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Duration</span>
+            <span class="detail-value">${callData.duration} seconds</span>
+          </div>
+          <div class="detail-row" style="border-bottom:none;">
+            <span class="detail-label">Outcome</span>
+            <span class="detail-value">${callData.outcome}</span>
+          </div>
 
-    ${callData.notes ? `<p><strong>Notes:</strong> ${callData.notes}</p>` : ''}
+          ${callData.notes ? `<div style="background:#fff;padding:16px;border-radius:8px;margin-top:16px;border:1px solid #e2e8f0;"><strong>Summary:</strong><br>${callData.notes}</div>` : ''}
 
-    <p><a href="https://app.detailpilot.ai/dashboard">View in Dashboard</a></p>
-
-    <p>Best regards,<br>DetailPilot AI</p>
+          <a href="https://app.detailpilot.ai/dashboard" class="cta-button">View in Dashboard →</a>
+        </div>
+        <div class="footer">
+          <p>Sent by DetailPilot AI • Your AI Receptionist</p>
+          <p><a href="https://app.detailpilot.ai/settings" style="color:#3b82f6;">Manage notification preferences</a></p>
+        </div>
+      </div>
+    </body>
+    </html>
   `;
 
-  // Use Supabase's built-in email sending (if configured)
-  // For MVP, we'll log this - you can integrate with Resend or SendGrid later
-  console.log('Email notification prepared for:', user.email);
-  console.log('Subject:', emailSubject);
-  console.log('Body preview:', emailBody.substring(0, 200));
+  // Send via Resend
+  const resendApiKey = Deno.env.get('RESEND_API_KEY');
 
-  // TODO: Integrate with Resend API
-  // const resendApiKey = Deno.env.get('RESEND_API_KEY');
-  // if (resendApiKey) {
-  //   await fetch('https://api.resend.com/emails', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Authorization': `Bearer ${resendApiKey}`,
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({
-  //       from: 'DetailPilot AI <noreply@detailpilot.ai>',
-  //       to: user.email,
-  //       subject: emailSubject,
-  //       html: emailBody,
-  //     }),
-  //   });
-  // }
+  if (resendApiKey) {
+    console.log('Sending email via Resend to:', user.email);
+
+    try {
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${resendApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'DetailPilot AI <notifications@detailpilot.ai>',
+          to: user.email,
+          subject: emailSubject,
+          html: emailBody,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Resend API error:', errorText);
+        throw new Error(`Resend API error: ${errorText}`);
+      }
+
+      const result = await response.json();
+      console.log('Email sent successfully:', result.id);
+    } catch (error) {
+      console.error('Failed to send email via Resend:', error);
+      throw error;
+    }
+  } else {
+    // Log for debugging when Resend is not configured
+    console.log('RESEND_API_KEY not configured. Email would be sent to:', user.email);
+    console.log('Subject:', emailSubject);
+    console.log('To enable emails, set RESEND_API_KEY in Supabase secrets');
+  }
 }
 
 // Helper functions to extract data from Vapi call

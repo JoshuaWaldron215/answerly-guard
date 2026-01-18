@@ -17,20 +17,24 @@ import {
   Loader2
 } from "lucide-react";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { db } from "@/lib/supabase";
 import StatCard from "@/components/dashboard/StatCard";
 import ActivityItem from "@/components/dashboard/ActivityItem";
 import AiAssistant from "@/components/dashboard/AiAssistant";
 import PlanToggle from "@/components/dashboard/PlanToggle";
+import SetupChecklist from "@/components/dashboard/SetupChecklist";
+import SmartFollowUps from "@/components/dashboard/SmartFollowUps";
 
 const filterOptions = ["Today", "This Week", "High Intent"];
 
 export default function Dashboard() {
   const [activeFilter, setActiveFilter] = useState("Today");
   const [plan, setPlan] = useState<"starter" | "pro">("pro");
+  const [isProvisioning, setIsProvisioning] = useState(false);
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   // Fetch user data
   const { data: userData, isLoading: userLoading } = useQuery({
@@ -38,6 +42,43 @@ export default function Dashboard() {
     queryFn: () => db.getUser(user!.id),
     enabled: !!user,
   });
+
+  // Fetch hot leads for follow-up cards
+  const { data: hotLeads } = useQuery({
+    queryKey: ['hot-leads', user?.id],
+    queryFn: () => db.getHotLeads(user!.id),
+    enabled: !!user,
+    refetchInterval: 30000,
+  });
+
+  // Fetch follow-up calls
+  const { data: followUpCalls } = useQuery({
+    queryKey: ['follow-up-calls', user?.id],
+    queryFn: () => db.getFollowUpCalls(user!.id),
+    enabled: !!user,
+    refetchInterval: 30000,
+  });
+
+  // Phone provisioning handler
+  const handleProvisionPhone = async () => {
+    if (!user) return;
+    setIsProvisioning(true);
+
+    try {
+      const result = await db.provisionPhoneNumber(user.id);
+      if (result.success) {
+        queryClient.invalidateQueries({ queryKey: ['user-data', user.id] });
+      }
+    } finally {
+      setIsProvisioning(false);
+    }
+  };
+
+  // Check if user needs onboarding
+  const needsOnboarding = userData && (
+    !userData.onboarding_completed &&
+    (!userData.vapi_phone_number || !userData.onboarding_steps?.phone_assigned)
+  );
 
   // Fetch dashboard stats
   const { data: stats, isLoading: statsLoading } = useQuery({
@@ -189,6 +230,23 @@ export default function Dashboard() {
             <PlanToggle plan={plan} onPlanChange={setPlan} />
           </div>
         </motion.div>
+
+        {/* Setup Checklist - For new users */}
+        {needsOnboarding && userData && (
+          <SetupChecklist
+            user={userData}
+            onProvisionPhone={handleProvisionPhone}
+            isProvisioning={isProvisioning}
+          />
+        )}
+
+        {/* Smart Follow-Up Cards - Show when there are actionable items */}
+        {!needsOnboarding && recentCalls && hotLeads && (
+          <SmartFollowUps
+            calls={recentCalls}
+            hotLeads={hotLeads}
+          />
+        )}
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
