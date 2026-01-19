@@ -1,73 +1,31 @@
-# Welcome to your Lovable project
+DetailPilot - AI Receptionist for Auto DetailersNever miss another customer. AI answers calls 24/7, captures leads, and books appointments automatically.🎯 The ProblemAuto detailers lose $2,000-5,000/month from:
 
-## Project info
+📞 Missed calls while working (62% never call back)
+⏰ Slow follow-ups (leads go cold in 24 hours)
+📱 Unanswered DMs on Instagram
+🗓️ Manual booking back-and-forth via text
+Result: Lost revenue, frustrated customers, burned-out owners.✨ The SolutionDetailPilot is your AI business partner that:
+Answers every call - Professional AI receptionist picks up 24/7
+Captures leads - Gets name, phone, vehicle, service needed
+Books appointments - Sends booking link via SMS instantly
+Follows up smart - AI tells you exactly who to text and what to say
+Gives insights - "Revenue down 18% this week because response time increased"
+It's like hiring a receptionist + business consultant for $99/month.🚀 FeaturesCore (All Plans)
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+✅ AI Voice Receptionist - Answers calls, answers questions, sounds human
+✅ Smart Lead Capture - Automatically extracts customer info from conversations
+✅ Instant Booking Links - SMS sent within seconds of call ending
+✅ Beautiful Dashboard - See all leads, bookings, and stats in one place
+✅ Click-to-Text Follow-ups - AI writes the message, you just send it
+Pro Plan ($149/mo)
 
-## How can I edit this code?
+🤖 AI Business Assistant - Ask anything: "Who should I follow up with today?"
+📊 Advanced Analytics - Revenue trends, conversion funnels, ROI calculator
+⚡ Auto Follow-up Sequences - AI texts leads automatically if they don't book
+💡 Daily Recommendations - "Sarah called 4 hours ago about ceramic coating - follow up now"
+Coming Soon
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+📅 Google Calendar Sync - Bookings appear in your calendar automatically
+🎙️ Real-time Booking - AI checks availability and books during the call
+📸 Instagram DM Bot - AI answers DMs 24/7
+👥 Team Mode - Multiple users per account
